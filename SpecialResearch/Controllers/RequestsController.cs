@@ -55,8 +55,8 @@ namespace SpecialResearch.Controllers
             ViewData["User1Id"] = new SelectList(_context.User, "Id", "Login");
             Request request = new Request();
             request.CreateDate = DateTime.Now;
-            request.User1Id = 255;
-            request.UserId = 255;
+            request.User1Id = 1;
+            request.UserId = 2;
             return View(request);
         }
 
@@ -67,6 +67,9 @@ namespace SpecialResearch.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Create([Bind("Id,Number,CreateDate,StageID,UserId,User1Id,UseOrder,EndDate,PhotoCopy")] Request request)
         {
+            request.User1Id = 1;
+            request.StageID = 1;
+            request.UserId = 2;
             if (ModelState.IsValid)
             {
                 _context.Add(request);
