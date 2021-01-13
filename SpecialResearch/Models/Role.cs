@@ -16,6 +16,6 @@ namespace SpecialResearch.Models
         public string Name { get; set; }
 
         [Display(Name = "Описание прав доступа")]
-        public string Manufacturer { get; set; }
+        public string Description { get; set; }
     }
 }

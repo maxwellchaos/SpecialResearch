@@ -17,7 +17,6 @@ namespace SpecialResearch.Models
         [Display(Name = "Номер заявки")]
         public string Number { get; set; }
 
-        [Required]
         [Display(Name = "Дата создания")]
         public DateTime CreateDate { get; set; }
 
@@ -30,7 +29,13 @@ namespace SpecialResearch.Models
 
         [Display(Name = "Создатель заявки")]
         public int UserId { get; set; }
+        [Display(Name = "Создатель заявки")]
         public User User { get; set; }
+
+        [Display(Name = "Выдавший предписание")]
+        public int User1Id { get; set; }
+        [Display(Name = "Выдавший предписание")]
+        public User User1 { get; set; }
 
         [Display(Name = "Предписание на эксплуатацию")]
         public int UseOrder { get; set; }

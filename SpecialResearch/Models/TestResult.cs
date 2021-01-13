@@ -18,7 +18,7 @@ namespace SpecialResearch.Models
         public Equipment Equipment { get; set; }
 
         [Display(Name = "Результат испытания")]
-        public string Manufacturer { get; set; }
+        public string Result { get; set; }
 
         [Display(Name = "Интерфейс")]
         public int InterfaceId { get; set; }
@@ -28,10 +28,14 @@ namespace SpecialResearch.Models
         public bool SignalFound { get; set; }
 
         [Display(Name = "Тест пройден")]
-        public bool OperatingMode { get; set; }
+        public bool TestIsOk { get; set; }
 
         [Display(Name = "Дата проведения испытания")]
         public DateTime Date { get; set; }
+
+        [Display(Name = "Тактовая частота")]
+        public int frequency { get; set; }
+
 
         [Display(Name = "Тип испытания")]
         public int TestTypeId { get; set; }
