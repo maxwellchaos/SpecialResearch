@@ -1,4 +1,6 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Session;
 using Microsoft.Extensions.Logging;
 using SpecialResearch.Models;
 using System;
@@ -16,10 +18,15 @@ namespace SpecialResearch.Controllers
         public HomeController(ILogger<HomeController> logger)
         {
             _logger = logger;
+           
         }
 
         public IActionResult Index()
         {
+            //Притворяемся, что залогинился Админ
+            HttpContext.Session.SetString("CurrentUserId","5");
+            ViewBag.UserId = HttpContext.Session.GetString("CurrentUserId");
+            //ViewData.Add("UserName", HttpContext.Session.GetString("CurrentUserId"));
             return View();
         }
 

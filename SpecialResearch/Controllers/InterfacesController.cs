@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
@@ -22,6 +23,7 @@ namespace SpecialResearch.Controllers
         // GET: Interfaces
         public async Task<IActionResult> Index()
         {
+            ViewBag.UserId = HttpContext.Session.GetString("CurrentUserId");
             return View(await _context.Interface.ToListAsync());
         }
 
