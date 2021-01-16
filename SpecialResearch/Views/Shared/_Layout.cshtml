@@ -25,7 +25,7 @@
                             <a class="nav-link text-dark" asp-area="" asp-controller="Home" asp-action="Privacy">Privacy</a>
                         </li>
                         <li class="nav-item">
-                            <p class="nav-link text-dark">Подключен @Context.Session.GetString("CurrentUserId")<p>
+                            <p class="nav-link text-dark">Подключен @Context.Session.GetInt32("CurrentUserId")<p>
                         </li>
                     </ul>
                 </div>

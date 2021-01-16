@@ -7,6 +7,10 @@ using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
 using SpecialResearch.Data;
 using SpecialResearch.Models;
+using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Session;
+
 
 namespace SpecialResearch.Controllers
 {
@@ -56,7 +60,7 @@ namespace SpecialResearch.Controllers
             Request request = new Request();
             request.CreateDate = DateTime.Now;
             request.User1Id = 1;
-            request.UserId = 2;
+            request.UserId = (int)HttpContext.Session.GetInt32("CurrentUserId");
             return View(request);
         }
 
