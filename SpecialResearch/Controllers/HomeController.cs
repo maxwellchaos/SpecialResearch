@@ -27,7 +27,7 @@ namespace SpecialResearch.Controllers
             HttpContext.Session.SetInt32("CurrentUserId",2);
            
             
-            return View();
+            return RedirectToAction("index","Requests");
         }
 
         public IActionResult Privacy()

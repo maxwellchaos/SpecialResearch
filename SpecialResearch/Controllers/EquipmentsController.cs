@@ -26,6 +26,27 @@ namespace SpecialResearch.Controllers
             return View(await specialResearchContext.ToListAsync());
         }
 
+        //// GET: Equipments
+        public async Task<IActionResult> List(int? id)
+        {
+            var specialResearchContext = _context.Equipment
+                .Include(e => e.Request)
+                .Where(p => p.RequestId == id);
+            var ReqContext = _context.Request
+                .Where(p => p.Id == id)
+                .Include(u => u.Stage)
+                .Include(u => u.User)
+                .Include(u => u.User1).ToList();
+            Request rq = _context.Request.Where(p => p.Id == id).FirstOrDefault();
+            ViewBag.rq = rq;
+            //ViewBag["CreateorName"]
+            //ViewBag["StageName"]
+            //ViewBag["CreateorName"]
+            //ViewBag["CreateorName"]
+            //ViewBag["CreateorName"]
+            return View(await specialResearchContext.ToListAsync());
+        }
+
         // GET: Equipments/Details/5
         public async Task<IActionResult> Details(int? id)
         {
@@ -46,10 +67,13 @@ namespace SpecialResearch.Controllers
         }
 
         // GET: Equipments/Create
-        public IActionResult Create()
+        public IActionResult Create(int? id)
         {
             ViewData["RequestId"] = new SelectList(_context.Request, "Id", "Number");
-            return View();
+           // ViewBag.RequestId = id;
+            Equipment equipment = new Equipment();
+            equipment.RequestId = (int)id;
+            return View(equipment);
         }
 
         // POST: Equipments/Create

@@ -8,7 +8,6 @@ using Microsoft.EntityFrameworkCore;
 using SpecialResearch.Data;
 using SpecialResearch.Models;
 using Microsoft.AspNetCore.Http;
-using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Session;
 
 
@@ -47,6 +46,7 @@ namespace SpecialResearch.Controllers
             {
                 return NotFound();
             }
+            
 
             return View(request);
         }
@@ -58,9 +58,11 @@ namespace SpecialResearch.Controllers
             ViewData["UserId"] = new SelectList(_context.User, "Id", "Login");
             ViewData["User1Id"] = new SelectList(_context.User, "Id", "Login");
             Request request = new Request();
-            request.CreateDate = DateTime.Now;
-            request.User1Id = 1;
-            request.UserId = (int)HttpContext.Session.GetInt32("CurrentUserId");
+            //Ставим данные по умолчанию для создания заявки
+            request.CreateDate = DateTime.Now;//Сейчас
+            request.User1Id = 1;//Никто не выдвал предписания
+            request.UserId = (int)HttpContext.Session.GetInt32("CurrentUserId");//Залогинившийся юзер - создатель
+            
             return View(request);
         }
 
@@ -102,7 +104,35 @@ namespace SpecialResearch.Controllers
             ViewData["StageID"] = new SelectList(_context.Stage, "Id", "StageName", request.StageID);
             ViewData["UserId"] = new SelectList(_context.User, "Id", "Login", request.UserId);
             ViewData["User1Id"] = new SelectList(_context.User, "Id", "Login", request.User1Id);
+            
             return View(request);
+        }
+
+        // GET: Requests/Edit/5
+        public async Task<IActionResult> NextStage(int? id)
+        {
+            if (id == null)
+            {
+                return NotFound();
+            }
+
+            var request = await _context.Request.FindAsync(id);
+            
+            if (request == null)
+            {
+                return NotFound();
+            }
+            request.StageID++;
+            try
+            {
+                _context.Update(request);
+                await _context.SaveChangesAsync();
+            }
+            catch (Exception)
+            {
+                return RedirectToAction(nameof(Index));
+            }
+            return RedirectToAction(nameof(Index));
         }
 
         // POST: Requests/Edit/5

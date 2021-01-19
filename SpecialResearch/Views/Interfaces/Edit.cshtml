@@ -1,17 +1,11 @@
 ﻿@model SpecialResearch.Models.Interface
 
 @{
-    ViewData["Title"] = "Home Page";
+    ViewData["Title"] = "Edit";
+    Layout = "~/Views/Shared/_Layout.cshtml";
 }
 
-<!DOCTYPE html>
-
-<html>
-<head>
-    <meta name="viewport" content="width=device-width" />
-    <title>Изменить</title>
-</head>
-<body>
+<h1>Edit</h1>
 
 <h4>Interface</h4>
 <hr />
@@ -38,11 +32,9 @@
 </div>
 
 <div>
-    <a asp-action="Index">Вернуться к списку</a>
+    <a asp-action="Index">Back to List</a>
 </div>
 
 @section Scripts {
     @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
 }
-</body>
-</html>

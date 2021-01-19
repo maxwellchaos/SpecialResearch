@@ -10,19 +10,41 @@
 <body>
     <header>
         <nav class="navbar navbar-expand-sm navbar-toggleable-sm navbar-light bg-white border-bottom box-shadow mb-3">
+            <img src="~/img/logo_ru.png" />
             <div class="container">
+
                 <a class="navbar-brand" asp-area="" asp-controller="Home" asp-action="Index">SpecialResearch</a>
                 <button class="navbar-toggler" type="button" data-toggle="collapse" data-target=".navbar-collapse" aria-controls="navbarSupportedContent"
                         aria-expanded="false" aria-label="Toggle navigation">
                     <span class="navbar-toggler-icon"></span>
                 </button>
                 <div class="navbar-collapse collapse d-sm-inline-flex flex-sm-row-reverse">
-                    <ul class="navbar-nav flex-grow-1">
+                    <ul class="nav nav-tabs">
+
                         <li class="nav-item">
-                            <a class="nav-link text-dark" asp-area="" asp-controller="Home" asp-action="Index">Home</a>
+                            <a class="nav-link" href="/equipments">Оборудование</a>
+                        </li>
+                        <li class="nav-item dropdown">
+                            <a class="nav-link dropdown-toggle" data-toggle="dropdown" href="#"
+                               role="button" aria-haspopup="true" aria-expanded="false">Справочники</a>
+                            <div class="dropdown-menu">
+                                <a class="dropdown-item" href="/stages">Этапы заявки</a>
+
+                                <a class="dropdown-item" href="/Interfaces">Интерфейсы</a>
+
+                                <a class="dropdown-item" href="/TestTypes">Типы испытаний </a>
+
+                                <div class="dropdown-divider"></div>
+
+                                <a class="dropdown-item" href="/Roles">Права доступа</a>
+                            </div>
+                        </li>
+
+                        <li class="nav-item">
+                            <a class="nav-link" href="/Requests">Заявки</a>
                         </li>
                         <li class="nav-item">
-                            <a class="nav-link text-dark" asp-area="" asp-controller="Home" asp-action="Privacy">Privacy</a>
+                            <a class="nav-link" href="/TestResults">Результаты испытания</a>
                         </li>
                         <li class="nav-item">
                             <p class="nav-link text-dark">Подключен @Context.Session.GetInt32("CurrentUserId")<p>
