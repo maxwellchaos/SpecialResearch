@@ -69,11 +69,12 @@ namespace SpecialResearch.Controllers
         // GET: Equipments/Create
         public IActionResult Create(int? id)
         {
-            ViewData["RequestId"] = new SelectList(_context.Request, "Id", "Number");
-           // ViewBag.RequestId = id;
-            Equipment equipment = new Equipment();
-            equipment.RequestId = (int)id;
-            return View(equipment);
+            //ViewData["RequestId"] = new SelectList(_context.Request, "Id", "Number");
+            // ViewBag.RequestId = id;
+            Equipment equipmentData = new Equipment();
+            equipmentData.RequestId = (int)id;
+            ViewBag.RequestName = _context.Request.Where(r => r.Id == id).FirstOrDefault().Number;
+            return View(equipmentData);
         }
 
         // POST: Equipments/Create
@@ -81,13 +82,14 @@ namespace SpecialResearch.Controllers
         // more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create([Bind("Id,Name,RequestId,Manufacturer,Model,SerialNumber,OperatingMode")] Equipment equipment)
+        public async Task<IActionResult> Create([Bind("Name,RequestId,Manufacturer,Model,SerialNumber,OperatingMode")] Equipment equipment)
         {
+          //  equipment.RequestId = equipmentData.RequestId;
             if (ModelState.IsValid)
             {
                 _context.Add(equipment);
                 await _context.SaveChangesAsync();
-                return RedirectToAction(nameof(Index));
+                return RedirectToAction(nameof(List),new { id = equipment.RequestId });
             }
             ViewData["RequestId"] = new SelectList(_context.Request, "Id", "Number", equipment.RequestId);
             return View(equipment);
@@ -106,7 +108,9 @@ namespace SpecialResearch.Controllers
             {
                 return NotFound();
             }
-            ViewData["RequestId"] = new SelectList(_context.Request, "Id", "Number", equipment.RequestId);
+            //ViewData["RequestId"] = new SelectList(_context.Request, "Id", "Number", equipment.RequestId);
+            int RequestId = _context.Equipment.Where(e => e.Id == id).FirstOrDefault().RequestId;
+            ViewBag.RequestName = _context.Request.Where(r => r.Id == RequestId).FirstOrDefault().Number;
             return View(equipment);
         }
 
@@ -140,7 +144,7 @@ namespace SpecialResearch.Controllers
                         throw;
                     }
                 }
-                return RedirectToAction(nameof(Index));
+                return RedirectToAction(nameof(List), new { id = equipment.RequestId });
             }
             ViewData["RequestId"] = new SelectList(_context.Request, "Id", "Number", equipment.RequestId);
             return View(equipment);

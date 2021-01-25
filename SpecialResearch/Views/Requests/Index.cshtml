@@ -77,7 +77,10 @@
             <td>
                 <a asp-action="Edit" asp-route-id="@item.Id">Изменить</a> |
                 <a asp-action="Delete" asp-route-id="@item.Id">Удалить</a>
-                <a asp-action="NextStage" asp-route-id="@item.Id">Перевести на следующий этап</a>
+                @if (item.Stage.Id < 4)
+                {
+                    <a asp-action="NextStage" asp-route-id="@item.Id">Перевести на следующий этап</a>
+                }
             </td>
         </tr>
 }

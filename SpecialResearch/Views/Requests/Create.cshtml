@@ -27,14 +27,16 @@
             </div>
             <div class="form-group col-md-4">
                 <label asp-for="StageID" class="control-label"></label>
-                <select asp-for="StageID" class="form-control" asp-items="ViewBag.StageID" disabled></select>
+                <input asp-for="StageID" class="form-control" disabled></input>
             </div>
 
+          
             <div class="form-group col-md-4">
                 <label asp-for="UserId" class="control-label"></label>
-                <select asp-for="UserId" class="form-control" asp-items="ViewBag.UserId" disabled></select>
-            </div>
-            
+                <input asp-for="UserId" class="form-control" hidden></input>
+                <label class="form-control"> @ViewBag.UserName</label>
+</div>
+
             <div class="form-group col-md-4">
                 <label asp-for="Number" class="control-label"></label>
                 <input asp-for="Number" class="form-control" />
@@ -42,7 +44,7 @@
             </div>
             <div class="form-group col-md-4">
                 <label asp-for="User1Id" class="control-label" hidden></label>
-                <select asp-for="User1Id" class="form-control" asp-items="ViewBag.User1Id" hidden></select>
+                <input asp-for="User1Id" class="form-control" hidden></input>
             </div>
             <div class="form-group col-md-4">
                 <label asp-for="PhotoCopy" class="control-label"></label>

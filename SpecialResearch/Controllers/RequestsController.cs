@@ -54,15 +54,14 @@ namespace SpecialResearch.Controllers
         // GET: Requests/Create
         public IActionResult Create()
         {
-            ViewData["StageID"] = new SelectList(_context.Stage, "Id", "StageName");
-            ViewData["UserId"] = new SelectList(_context.User, "Id", "Login");
-            ViewData["User1Id"] = new SelectList(_context.User, "Id", "Login");
+            //ViewData["StageID"] = new SelectList(_context.Stage, "Id", "StageName");
+            //ViewData["UserId"] = new SelectList(_context.User, "Id", "Login");
+            //ViewData["User1Id"] = new SelectList(_context.User, "Id", "Login");
             Request request = new Request();
             //Ставим данные по умолчанию для создания заявки
             request.CreateDate = DateTime.Now;//Сейчас
-            request.User1Id = 1;//Никто не выдвал предписания
             request.UserId = (int)HttpContext.Session.GetInt32("CurrentUserId");//Залогинившийся юзер - создатель
-            
+           ViewBag.UserName = _context.User.Where(u => u.Id == request.UserId).FirstOrDefault().Name;
             return View(request);
         }
 
@@ -75,7 +74,7 @@ namespace SpecialResearch.Controllers
         {
             request.User1Id = 1;
             request.StageID = 1;
-            request.UserId = 2;
+            //request.UserId = 2;
             if (ModelState.IsValid)
             {
                 _context.Add(request);

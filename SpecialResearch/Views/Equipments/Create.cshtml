@@ -16,8 +16,8 @@
 
 
     <form asp-action="Create">
-        <h4>Новое оборудование для заявки № 
-        <select asp-for="RequestId" asp-items="@ViewBag.RequestId" disabled></select></h4>
+        <input asp-for="RequestId" hidden></input>
+        <h4>Новое оборудование для заявки № @ViewBag.RequestName</h4>
         <hr />
         <div class="form-row">
             <div asp-validation-summary="ModelOnly" class="text-danger"></div>
@@ -48,14 +48,14 @@
             </div>
         </div>
         <div class="form-group">
-            <input type="submit" value="Create" class="btn btn-primary" />
+            <input type="submit" value="Добавить оборудование" class="btn btn-primary" />
         </div>
 
     </form>
      
 
 <div>
-    <a asp-action="Index">Вернуться к Заявке без сохранения</a>
+    <a asp-action="List" asp-route-id="@Model.RequestId">Вернуться к Заявке без сохранения</a>
 </div>
 
 @section Scripts {
