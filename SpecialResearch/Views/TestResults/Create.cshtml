@@ -1,0 +1,78 @@
+﻿@model SpecialResearch.Models.TestResult
+
+@{
+    ViewData["Title"] = "Home Page";
+}
+
+<!DOCTYPE html>
+
+<html>
+<head>
+    <meta name="viewport" content="width=device-width" />
+    <title>Create</title>
+</head>
+<body>
+
+<h4>TestResult</h4>
+<hr />
+<div class="row">
+    <div class="col-md-4">
+        <form asp-action="Create">
+            <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+            <div class="form-group">
+                <label asp-for="EquipmentId" class="control-label"></label>
+                <select asp-for="EquipmentId" class ="form-control" asp-items="ViewBag.EquipmentId"></select>
+            </div>
+            <div class="form-group">
+                <label asp-for="Result" class="control-label"></label>
+                <input asp-for="Result" class="form-control" />
+                <span asp-validation-for="Result" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="InterfaceId" class="control-label"></label>
+                <select asp-for="InterfaceId" class ="form-control" asp-items="ViewBag.InterfaceId"></select>
+            </div>
+            <div class="form-group form-check">
+                <label class="form-check-label">
+                    <input class="form-check-input" asp-for="SignalFound" /> @Html.DisplayNameFor(model => model.SignalFound)
+                </label>
+            </div>
+            <div class="form-group form-check">
+                <label class="form-check-label">
+                    <input class="form-check-input" asp-for="TestIsOk" /> @Html.DisplayNameFor(model => model.TestIsOk)
+                </label>
+            </div>
+            <div class="form-group">
+                <label asp-for="Date" class="control-label"></label>
+                <input asp-for="Date" class="form-control" />
+                <span asp-validation-for="Date" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="frequency" class="control-label"></label>
+                <input asp-for="frequency" class="form-control" />
+                <span asp-validation-for="frequency" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="TestTypeId" class="control-label"></label>
+                <select asp-for="TestTypeId" class ="form-control" asp-items="ViewBag.TestTypeId"></select>
+            </div>
+            <div class="form-group">
+                <label asp-for="UserId" class="control-label"></label>
+                <select asp-for="UserId" class ="form-control" asp-items="ViewBag.UserId"></select>
+            </div>
+            <div class="form-group">
+                <input type="submit" value="Create" class="btn btn-primary" />
+            </div>
+        </form>
+    </div>
+</div>
+
+<div>
+    <a asp-action="Index">Вернуться к списку</a>
+</div>
+
+@section Scripts {
+    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+}
+</body>
+</html>
