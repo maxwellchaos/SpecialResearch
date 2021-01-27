@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
@@ -23,6 +24,22 @@ namespace SpecialResearch.Controllers
         public async Task<IActionResult> Index()
         {
             var specialResearchContext = _context.TestResult.Include(t => t.Equipment).Include(t => t.Interface).Include(t => t.TestType).Include(t => t.User);
+            return View(await specialResearchContext.ToListAsync());
+        }
+
+        //// GET: Equipments
+        public async Task<IActionResult> List(int? id)
+        {
+            var specialResearchContext = _context.TestResult
+                .Include(t => t.Equipment)
+                .Include(t=>t.User)
+                .Include(t=>t.Interface)
+                .Include(t=>t.TestType)
+                .Where(e => e.EquipmentId == id);
+            Equipment eq = _context.Equipment.Where(e => e.Id == id).FirstOrDefault();
+            ViewBag.eq = eq;
+            String ReqNum = _context.Request.Where(r => r.Id == eq.RequestId).FirstOrDefault().Number;
+            ViewBag.ReqNum = ReqNum;
             return View(await specialResearchContext.ToListAsync());
         }
 
@@ -48,14 +65,20 @@ namespace SpecialResearch.Controllers
             return View(testResult);
         }
 
+       
         // GET: TestResults/Create
-        public IActionResult Create()
+        public IActionResult Create(int? id)//equipment id
         {
-            ViewData["EquipmentId"] = new SelectList(_context.Equipment, "Id", "Name");
+            //ViewData["EquipmentId"] = new SelectList(_context.Equipment, "Id", "Name");
+            ViewBag.eq = _context.Equipment.Where(e => e.Id == id).FirstOrDefault();
             ViewData["InterfaceId"] = new SelectList(_context.Interface, "Id", "Name");
             ViewData["TestTypeId"] = new SelectList(_context.TestType, "Id", "TestName");
-            ViewData["UserId"] = new SelectList(_context.User, "Id", "Login");
-            return View();
+            // ViewData["UserId"] = new SelectList(_context.User, "Id", "Login");
+            TestResult testResult = new TestResult();
+            testResult.UserId = (int)HttpContext.Session.GetInt32("CurrentUserId");//Залогинившийся юзер
+            testResult.EquipmentId = (int)id;
+            testResult.Date = DateTime.Now;
+            return View(testResult);
         }
 
         // POST: TestResults/Create
@@ -63,7 +86,7 @@ namespace SpecialResearch.Controllers
         // more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create([Bind("Id,EquipmentId,Result,InterfaceId,SignalFound,TestIsOk,Date,frequency,TestTypeId,UserId")] TestResult testResult)
+        public async Task<IActionResult> Create([Bind("EquipmentId,Result,InterfaceId,SignalFound,TestIsOk,Date,frequency,TestTypeId,UserId")] TestResult testResult)
         {
             if (ModelState.IsValid)
             {
@@ -91,10 +114,12 @@ namespace SpecialResearch.Controllers
             {
                 return NotFound();
             }
-            ViewData["EquipmentId"] = new SelectList(_context.Equipment, "Id", "Name", testResult.EquipmentId);
+            ViewBag.eq = _context.Equipment.Where(e => e.Id == id).FirstOrDefault();
+
+            // ViewData["EquipmentId"] = new SelectList(_context.Equipment, "Id", "Name", testResult.EquipmentId);
             ViewData["InterfaceId"] = new SelectList(_context.Interface, "Id", "Name", testResult.InterfaceId);
             ViewData["TestTypeId"] = new SelectList(_context.TestType, "Id", "TestName", testResult.TestTypeId);
-            ViewData["UserId"] = new SelectList(_context.User, "Id", "Login", testResult.UserId);
+            //ViewData["UserId"] = new SelectList(_context.User, "Id", "Login", testResult.UserId);
             return View(testResult);
         }
 

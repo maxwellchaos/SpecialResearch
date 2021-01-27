@@ -39,11 +39,6 @@ namespace SpecialResearch.Controllers
                 .Include(u => u.User1).ToList();
             Request rq = _context.Request.Where(p => p.Id == id).FirstOrDefault();
             ViewBag.rq = rq;
-            //ViewBag["CreateorName"]
-            //ViewBag["StageName"]
-            //ViewBag["CreateorName"]
-            //ViewBag["CreateorName"]
-            //ViewBag["CreateorName"]
             return View(await specialResearchContext.ToListAsync());
         }
 

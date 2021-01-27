@@ -107,7 +107,9 @@
         {
             <tr>
                 <td>
-                    @Html.DisplayFor(modelItem => item.Name)
+                    <a asp-controller="TestResults" asp-action="List" asp-route-id="@item.Id">
+                        @Html.DisplayFor(modelItem => item.Name)
+                    </a>
                 </td>
                
                 <td>
@@ -123,9 +125,9 @@
                     @Html.DisplayFor(modelItem => item.OperatingMode)
                 </td>
                 <td>
-                    <a asp-action="Edit" asp-route-id="@item.Id">Изменить</a> |
-                    <a asp-action="Details" asp-route-id="@item.Id">Добавить испытания</a> |
-                    <a asp-action="Delete" asp-route-id="@item.Id">Удалить</a>
+                    <a asp-action="Edit" asp-route-id="@item.Id">Изменить</a> |  <a asp-action="Delete" asp-route-id="@item.Id">Удалить</a>
+                    
+
                 </td>
             </tr>
         }
