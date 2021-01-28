@@ -40,6 +40,7 @@
                 @Html.DisplayNameFor(model => model.EndDate)
             </th>
             <th>
+               
                 @Html.DisplayNameFor(model => model.PhotoCopy)
             </th>
             <th></th>
@@ -72,7 +73,20 @@
                 @if (item.EndDate != null) Html.DisplayFor(modelItem => item.EndDate);
             </td>
             <td>
-                @Html.DisplayFor(modelItem => item.PhotoCopy)
+                
+                @if(item.PhotoCopy == null)
+                {
+                    <form asp-action="AddFile" asp-route-id="@item.Id" method="post" enctype="multipart/form-data">
+                        <input type="file" name="UploadedFile" />
+                        <input type="submit" value="Загрузить" />
+                    </form>
+                    
+                }
+                else
+                {
+                    <img src="@Url.Content(item.PhotoCopy)" width="100"/>
+                }
+                
             </td>
             <td>
                 <a asp-action="Edit" asp-route-id="@item.Id">Изменить</a> |

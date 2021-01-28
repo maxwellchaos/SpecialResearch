@@ -1,7 +1,10 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
+using Microsoft.AspNetCore.Hosting;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
@@ -13,10 +16,11 @@ namespace SpecialResearch.Controllers
     public class EquipmentsController : Controller
     {
         private readonly SpecialResearchContext _context;
-
-        public EquipmentsController(SpecialResearchContext context)
+        private readonly IWebHostEnvironment _webHostEnvironment;
+        public EquipmentsController(SpecialResearchContext context, IWebHostEnvironment webHostEnvironment)
         {
             _context = context;
+            _webHostEnvironment = webHostEnvironment;
         }
 
         // GET: Equipments
@@ -25,6 +29,27 @@ namespace SpecialResearch.Controllers
             var specialResearchContext = _context.Equipment.Include(e => e.Request);
             return View(await specialResearchContext.ToListAsync());
         }
+
+
+
+        public async Task<IActionResult> AddFile(int? id, IFormFile UploadedFile)
+        {
+            if (id != null && UploadedFile != null)
+            {
+
+                string Path = "/files/" + Guid.NewGuid().ToString() + UploadedFile.FileName;
+                using (var fileStream = new FileStream(_webHostEnvironment.WebRootPath + Path, FileMode.Create))
+                {
+                    await UploadedFile.CopyToAsync(fileStream);
+                }
+                Equipment equipment = _context.Equipment.Where(r => r.Id == id).FirstOrDefault();
+                equipment.PhotoCopy = Path;
+                await _context.SaveChangesAsync();
+                return RedirectToAction(nameof(List), new { id = equipment.RequestId });
+            }
+            return View();
+        }
+
 
         //// GET: Equipments
         public async Task<IActionResult> List(int? id)

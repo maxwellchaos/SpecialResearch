@@ -32,7 +32,7 @@ namespace SpecialResearch.Models
         [Display(Name = "Режим работы")]
         public string OperatingMode { get; set; }
 
-        //[Display(Name = "Фотокопия серийного номера")]
-        //public Bitmap PhotoCopy { get; set; }
+        [Display(Name = "Фотокопия серийного номера")]
+        public string PhotoCopy { get; set; }
     }
 }

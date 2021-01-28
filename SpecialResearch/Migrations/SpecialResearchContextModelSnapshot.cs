@@ -15,7 +15,7 @@ namespace SpecialResearch.Migrations
         {
 #pragma warning disable 612, 618
             modelBuilder
-                .HasAnnotation("ProductVersion", "3.1.10")
+                .HasAnnotation("ProductVersion", "3.1.11")
                 .HasAnnotation("Relational:MaxIdentifierLength", 128)
                 .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
 
@@ -37,6 +37,9 @@ namespace SpecialResearch.Migrations
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("OperatingMode")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("PhotoCopy")
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<int>("RequestId")
@@ -302,7 +305,7 @@ namespace SpecialResearch.Migrations
                             Id = 1,
                             Login = "Nobody",
                             Name = "Никто",
-                            Password = "AQAAAAEAACcQAAAAEMtph+6TgzAPjaA50wdilw8e0cSMUIwfIPPgltpNPaQxCEsAXJ1F2ZR1pvSq239LJA==",
+                            Password = "AQAAAAEAACcQAAAAEAEmc0ICNnJCFWz1RTCr3mfPgybwsJ2f0/LFytaBgSxvXd06fh5PAcripI2ohg7OUQ==",
                             RoleId = 1
                         },
                         new
@@ -310,7 +313,7 @@ namespace SpecialResearch.Migrations
                             Id = 2,
                             Login = "admin",
                             Name = "Иванов И.И.",
-                            Password = "AQAAAAEAACcQAAAAEM18cEbR1pWATN3ff9+S12+oRah5OHftkdez+/XytVQJ7kOCmXl+NrFD+ZzUR3Br4g==",
+                            Password = "AQAAAAEAACcQAAAAEDn5PhKtXS5i4Ph2zzjDIiD+mKrV3cFFnzqM+yGOlQ5SY2ycY7T21l89FwcvOkaABA==",
                             RoleId = 1
                         });
                 });

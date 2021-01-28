@@ -9,6 +9,8 @@ using SpecialResearch.Data;
 using SpecialResearch.Models;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Session;
+using System.IO;
+using Microsoft.AspNetCore.Hosting;
 
 
 namespace SpecialResearch.Controllers
@@ -16,9 +18,11 @@ namespace SpecialResearch.Controllers
     public class RequestsController : Controller
     {
         private readonly SpecialResearchContext _context;
+        private readonly IWebHostEnvironment _webHostEnvironment;
 
-        public RequestsController(SpecialResearchContext context)
+        public RequestsController(SpecialResearchContext context, IWebHostEnvironment webHostEnvironment)
         {
+            _webHostEnvironment = webHostEnvironment;
             _context = context;
         }
 
@@ -50,6 +54,31 @@ namespace SpecialResearch.Controllers
 
             return View(request);
         }
+
+
+      
+       
+       
+        public async Task<IActionResult> AddFile(int? id,IFormFile UploadedFile)
+        {
+            if (id != null && UploadedFile != null)
+            {
+
+                string Path = "/files/" + Guid.NewGuid().ToString()+UploadedFile.FileName;
+                using (var fileStream = new FileStream(_webHostEnvironment.WebRootPath+Path, FileMode.Create)) 
+                {
+                    await UploadedFile.CopyToAsync(fileStream);
+                }
+                Request request = _context.Request.Where(r => r.Id == id).FirstOrDefault();
+                request.PhotoCopy = Path;
+                await _context.SaveChangesAsync();
+                return RedirectToAction(nameof(Index));
+            }
+            return View();
+        }
+
+
+
 
         // GET: Requests/Create
         public IActionResult Create()

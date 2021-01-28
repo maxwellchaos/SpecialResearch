@@ -86,7 +86,7 @@
             <th>
                 @Html.DisplayNameFor(model => model.Name)
             </th>
-           
+
             <th>
                 @Html.DisplayNameFor(model => model.Manufacturer)
             </th>
@@ -99,37 +99,53 @@
             <th>
                 @Html.DisplayNameFor(model => model.OperatingMode)
             </th>
+            <th>
+                @Html.DisplayNameFor(model => model.PhotoCopy)
+            </th>
             <th></th>
         </tr>
     </thead>
     <tbody>
         @foreach (var item in Model)
         {
-            <tr>
-                <td>
-                    <a asp-controller="TestResults" asp-action="List" asp-route-id="@item.Id">
-                        @Html.DisplayFor(modelItem => item.Name)
-                    </a>
-                </td>
-               
-                <td>
-                    @Html.DisplayFor(modelItem => item.Manufacturer)
-                </td>
-                <td>
-                    @Html.DisplayFor(modelItem => item.Model)
-                </td>
-                <td>
-                    @Html.DisplayFor(modelItem => item.SerialNumber)
-                </td>
-                <td>
-                    @Html.DisplayFor(modelItem => item.OperatingMode)
-                </td>
-                <td>
-                    <a asp-action="Edit" asp-route-id="@item.Id">Изменить</a> |  <a asp-action="Delete" asp-route-id="@item.Id">Удалить</a>
-                    
+        <tr>
+            <td>
+                <a asp-controller="TestResults" asp-action="List" asp-route-id="@item.Id">
+                    @Html.DisplayFor(modelItem => item.Name)
+                </a>
+            </td>
 
-                </td>
-            </tr>
+            <td>
+                @Html.DisplayFor(modelItem => item.Manufacturer)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.Model)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.SerialNumber)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.OperatingMode)
+            </td>
+            <td>
+                @if (item.PhotoCopy == null)
+                {
+                    <form asp-action="AddFile" asp-route-id="@item.Id" method="post" enctype="multipart/form-data">
+                        <input type="file" name="UploadedFile" />
+                        <input type="submit" value="Загрузить" />
+                    </form>
+
+                }
+                else
+                {
+                    <img src="@Url.Content(item.PhotoCopy)" width="100" />
+                }
+            </td>
+            <td>
+                <a asp-action="Edit" asp-route-id="@item.Id">Изменить</a> |  <a asp-action="Delete" asp-route-id="@item.Id">Удалить</a>
+            </td>
+
+        </tr>
         }
     </tbody>
 </table>

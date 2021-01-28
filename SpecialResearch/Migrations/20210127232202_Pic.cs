@@ -3,7 +3,7 @@ using Microsoft.EntityFrameworkCore.Migrations;
 
 namespace SpecialResearch.Migrations
 {
-    public partial class DbDone1 : Migration
+    public partial class Pic : Migration
     {
         protected override void Up(MigrationBuilder migrationBuilder)
         {
@@ -93,10 +93,10 @@ namespace SpecialResearch.Migrations
                     Number = table.Column<string>(nullable: false),
                     CreateDate = table.Column<DateTime>(nullable: false),
                     StageID = table.Column<int>(nullable: false),
-                    UserId = table.Column<int>(nullable: true),
-                    User1Id = table.Column<int>(nullable: true),
-                    UseOrder = table.Column<int>(nullable: true),
-                    EndDate = table.Column<DateTime>(nullable: true),
+                    UserId = table.Column<int>(nullable: false),
+                    User1Id = table.Column<int>(nullable: false),
+                    UseOrder = table.Column<int>(nullable: false),
+                    EndDate = table.Column<DateTime>(nullable: false),
                     PhotoCopy = table.Column<string>(nullable: true)
                 },
                 constraints: table =>
@@ -113,13 +113,13 @@ namespace SpecialResearch.Migrations
                         column: x => x.User1Id,
                         principalTable: "User",
                         principalColumn: "Id",
-                        onDelete: ReferentialAction.NoAction);
+                        onDelete: ReferentialAction.Cascade);
                     table.ForeignKey(
                         name: "FK_Request_User_UserId",
                         column: x => x.UserId,
                         principalTable: "User",
                         principalColumn: "Id",
-                        onDelete: ReferentialAction.Cascade);
+                        onDelete: ReferentialAction.NoAction);
                 });
 
             migrationBuilder.CreateTable(
@@ -133,7 +133,8 @@ namespace SpecialResearch.Migrations
                     Manufacturer = table.Column<string>(nullable: true),
                     Model = table.Column<string>(nullable: true),
                     SerialNumber = table.Column<string>(nullable: true),
-                    OperatingMode = table.Column<string>(nullable: true)
+                    OperatingMode = table.Column<string>(nullable: true),
+                    PhotoCopy = table.Column<string>(nullable: true)
                 },
                 constraints: table =>
                 {
@@ -217,12 +218,12 @@ namespace SpecialResearch.Migrations
             migrationBuilder.InsertData(
                 table: "User",
                 columns: new[] { "Id", "Login", "Name", "Password", "RoleId" },
-                values: new object[] { 1, "Nobody", "Никто", "AQAAAAEAACcQAAAAEMtph+6TgzAPjaA50wdilw8e0cSMUIwfIPPgltpNPaQxCEsAXJ1F2ZR1pvSq239LJA==", 1 });
+                values: new object[] { 1, "Nobody", "Никто", "AQAAAAEAACcQAAAAEAEmc0ICNnJCFWz1RTCr3mfPgybwsJ2f0/LFytaBgSxvXd06fh5PAcripI2ohg7OUQ==", 1 });
 
             migrationBuilder.InsertData(
                 table: "User",
                 columns: new[] { "Id", "Login", "Name", "Password", "RoleId" },
-                values: new object[] { 2, "admin", "Иванов И.И.", "AQAAAAEAACcQAAAAEM18cEbR1pWATN3ff9+S12+oRah5OHftkdez+/XytVQJ7kOCmXl+NrFD+ZzUR3Br4g==", 1 });
+                values: new object[] { 2, "admin", "Иванов И.И.", "AQAAAAEAACcQAAAAEDn5PhKtXS5i4Ph2zzjDIiD+mKrV3cFFnzqM+yGOlQ5SY2ycY7T21l89FwcvOkaABA==", 1 });
 
             migrationBuilder.CreateIndex(
                 name: "IX_Equipment_RequestId",

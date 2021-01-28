@@ -117,5 +117,7 @@ namespace SpecialResearch.Data
 
         //Заполняю значения по умолчанию
         public DbSet<SpecialResearch.Models.TestResult> TestResult { get; set; }
+
+  
     }
 }
