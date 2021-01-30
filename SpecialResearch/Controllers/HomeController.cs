@@ -2,6 +2,7 @@
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Session;
 using Microsoft.Extensions.Logging;
+using SpecialResearch.Data;
 using SpecialResearch.Models;
 using System;
 using System.Collections.Generic;
@@ -13,20 +14,27 @@ namespace SpecialResearch.Controllers
 {
     public class HomeController : Controller
     {
-        private readonly ILogger<HomeController> _logger;
+      //  private readonly ILogger<HomeController> _logger;
+        private readonly SpecialResearchContext _context;
 
-        public HomeController(ILogger<HomeController> logger)
+     
+        //public HomeController(ILogger<HomeController> logger)
+        public HomeController(SpecialResearchContext context)
         {
-            _logger = logger;
-           
+           // _logger = logger;
+            _context = context;
+
         }
 
         public IActionResult Index()
         {
+            int UserId = 2;
             //Притворяемся, что залогинился Админ
-            HttpContext.Session.SetInt32("CurrentUserId",2);
-           
-            
+            HttpContext.Session.SetInt32("CurrentUserId", UserId);
+            string UserName = _context.User.Where(u => u.Id == UserId).FirstOrDefault().Name;
+            HttpContext.Session.SetString("CurrentUserName", UserName);
+
+
             return RedirectToAction("index","Requests");
         }
 
