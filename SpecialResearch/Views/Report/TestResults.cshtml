@@ -1,0 +1,104 @@
+﻿@model IEnumerable<SpecialResearch.Models.TestResult>
+
+@{
+    ViewData["Title"] = "Home Page";
+}
+
+<!DOCTYPE html>
+
+<html>
+<head>
+    <meta name="viewport" content="width=device-width" />
+    <title>Проведенные испытания</title>
+</head>
+<body>
+    <form asp-action="TestResults">
+       
+        <div class="form-row">
+            <div class="form-group col-md-4">
+                <label class="control-label">Дата начала показа</label>
+                <input value="@ViewBag.StartDate.ToString("yyyy-MM-dd")" name="StartDate" type="date" class="form-control" />
+            </div>
+            <div class="form-group col-md-4">
+                <label class="control-label">Дата конца показа</label>
+                <input value="@ViewBag.EndDate.ToString("yyyy-MM-dd")" name="EndDate" type="date" class="form-control" />
+            </div>
+        </div>
+        <div class="form-group">
+            <input asp-action="TestResults" type="submit" value="Показать" class="btn btn-primary" />
+        </div>
+    </form>
+
+    <h1>Проведенные испытания</h1>
+    <table class="table">
+        <thead>
+            <tr>
+                <th>
+                    Оборудование
+                </th>
+                <th>
+                    @Html.DisplayNameFor(model => model.Result)
+                </th>
+                <th>
+                    Интерфейс
+                </th>
+                <th>
+                    @Html.DisplayNameFor(model => model.SignalFound)
+                </th>
+                <th>
+                    @Html.DisplayNameFor(model => model.TestIsOk)
+                </th>
+                <th>
+                    @Html.DisplayNameFor(model => model.Date)
+                </th>
+                <th>
+                    @Html.DisplayNameFor(model => model.frequency)
+                </th>
+                <th>
+                    Тип испытания
+                </th>
+                <th>
+                    Испытатель
+                </th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var item in Model)
+            {
+                <tr>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.Equipment.Name)
+                        @Html.DisplayFor(modelItem => item.Equipment.Manufacturer)
+                        @Html.DisplayFor(modelItem => item.Equipment.Model)
+                    </td>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.Result)
+                    </td>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.Interface.Name)
+                    </td>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.SignalFound)
+                    </td>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.TestIsOk)
+                    </td>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.Date)
+                    </td>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.frequency)
+                    </td>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.TestType.TestName)
+                    </td>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.User.Name)
+                    </td>
+
+                </tr>
+            }
+        </tbody>
+    </table>
+</body>
+</html>

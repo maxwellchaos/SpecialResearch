@@ -1,0 +1,103 @@
+﻿@model IEnumerable<SpecialResearch.Models.Equipment>
+
+@{
+    ViewData["Title"] = "Home Page";
+}
+
+<!DOCTYPE html>
+
+<html>
+<head>
+    <meta name="viewport" content="width=device-width" />
+    <title>Проведенные испытания</title>
+</head>
+<body>
+    <form asp-action="TestResults">
+
+        <div class="form-row">
+            <div class="form-group col-md-4">
+                <label class="control-label">Дата начала показа</label>
+                <input value="@ViewBag.StartDate.ToString("yyyy-MM-dd")" name="StartDate" type="date" class="form-control" />
+            </div>
+            <div class="form-group col-md-4">
+                <label class="control-label">Дата конца показа</label>
+                <input value="@ViewBag.EndDate.ToString("yyyy-MM-dd")" name="EndDate" type="date" class="form-control" />
+            </div>
+        </div>
+        <div class="form-group">
+            <input asp-action="TestResults" type="submit" value="Показать" class="btn btn-primary" />
+        </div>
+    </form>
+
+    <h1>Проваленные испытания</h1>
+
+    <table class="table">
+        <thead>
+            <tr>
+                <th>
+                    @Html.DisplayNameFor(model => model.Name)
+                </th>
+                <th>
+                    Заявка
+                </th>
+                <th>
+                    @Html.DisplayNameFor(model => model.Manufacturer)
+                </th>
+                <th>
+                    @Html.DisplayNameFor(model => model.Model)
+                </th>
+                <th>
+                    @Html.DisplayNameFor(model => model.SerialNumber)
+                </th>
+                <th>
+                    @Html.DisplayNameFor(model => model.OperatingMode)
+                </th>
+                <th>
+                    @Html.DisplayNameFor(model => model.TestResultCount)
+                </th>
+                <th>
+                    @Html.DisplayNameFor(model => model.TestResultFailCount)
+                </th>
+             
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var item in Model)
+            {
+                if (item.TestResultFailCount != 0 )
+                {
+            <tr>
+                <td>
+                    @Html.DisplayFor(modelItem => item.Name)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.Request.Number)
+                    <br>
+                    @item.Request.CreateDate.ToString("dd.MM.yyyy")
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.Manufacturer)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.Model)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.SerialNumber)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.OperatingMode)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.TestResultCount)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.TestResultFailCount)
+                </td>
+       
+            </tr>
+                }
+            }
+        </tbody>
+    </table>
+</body>
+</html>

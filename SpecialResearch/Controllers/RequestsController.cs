@@ -29,7 +29,9 @@ namespace SpecialResearch.Controllers
         // GET: Requests
         public async Task<IActionResult> Index()
         {
-            var specialResearchContext = _context.Request.Include(r => r.Stage).Include(r => r.User).Include(r => r.User1);
+            var specialResearchContext = _context.Request.Include(r => r.Stage).
+                Include(r => r.User).Include(r => r.User1).
+                OrderByDescending(r=>r.CreateDate);
             return View(await specialResearchContext.ToListAsync());
         }
 
@@ -136,6 +138,63 @@ namespace SpecialResearch.Controllers
             return View(request);
         }
 
+        //CloseRquest
+        public async Task<IActionResult> CloseRquest(int? id)
+        {
+            if (id == null)
+            {
+                return NotFound();
+            }
+
+            var request = await _context.Request.FindAsync(id);
+
+            if (request == null)
+            {
+                return NotFound();
+            }
+            request.StageID = 4;
+            request.EndDate = DateTime.Now;
+
+            try
+            {
+                _context.Update(request);
+                await _context.SaveChangesAsync();
+            }
+            catch (Exception)
+            {
+                return RedirectToAction(nameof(Index));
+            }
+            return RedirectToAction(nameof(Index));
+        }
+        //GetUse
+        public async Task<IActionResult> GetUse(int? id)
+        {
+            if (id == null)
+            {
+                return NotFound();
+            }
+
+            var request = await _context.Request.FindAsync(id);
+
+            if (request == null)
+            {
+                return NotFound();
+            }
+            request.StageID = 3;
+            request.UseOrder = 1;
+            request.User1Id = (int)HttpContext.Session.GetInt32("CurrentUserId");//Залогинившийся юзер - Выдал предписание
+
+            try
+            {
+                _context.Update(request);
+                await _context.SaveChangesAsync();
+            }
+            catch (Exception)
+            {
+                return RedirectToAction(nameof(Index));
+            }
+            return RedirectToAction(nameof(Index));
+        }
         // GET: Requests/Edit/5
         public async Task<IActionResult> NextStage(int? id)
         {
@@ -151,6 +210,11 @@ namespace SpecialResearch.Controllers
                 return NotFound();
             }
             request.StageID++;
+            
+            if(request.StageID == 4)
+            {
+                request.EndDate = DateTime.Now;
+            }
             try
             {
                 _context.Update(request);

@@ -27,6 +27,13 @@ namespace SpecialResearch.Controllers
         public async Task<IActionResult> Index()
         {
             var specialResearchContext = _context.Equipment.Include(e => e.Request);
+            var EqWithTests = _context.TestResult.Include(t=>t.Equipment).Include(e => e.Equipment.Request);
+            foreach(var tr in EqWithTests)
+            {
+                tr.Equipment.TestResultCount++;
+                if(!tr.TestIsOk)
+                    tr.Equipment.TestResultFailCount++;
+            }
             return View(await specialResearchContext.ToListAsync());
         }
 

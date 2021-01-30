@@ -27,6 +27,8 @@ namespace SpecialResearch.Controllers
             return View(await specialResearchContext.ToListAsync());
         }
 
+
+
         //// GET: Equipments
         public async Task<IActionResult> List(int? id)
         {
@@ -92,7 +94,7 @@ namespace SpecialResearch.Controllers
             {
                 _context.Add(testResult);
                 await _context.SaveChangesAsync();
-                return RedirectToAction(nameof(Index));
+                return RedirectToAction(nameof(List), new { id = testResult.EquipmentId });
             }
             ViewData["EquipmentId"] = new SelectList(_context.Equipment, "Id", "Name", testResult.EquipmentId);
             ViewData["InterfaceId"] = new SelectList(_context.Interface, "Id", "Name", testResult.InterfaceId);
