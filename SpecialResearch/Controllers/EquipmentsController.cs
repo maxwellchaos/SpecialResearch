@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
@@ -13,10 +14,12 @@ using SpecialResearch.Models;
 
 namespace SpecialResearch.Controllers
 {
+    [Authorize]
     public class EquipmentsController : Controller
     {
         private readonly SpecialResearchContext _context;
-        private readonly IWebHostEnvironment _webHostEnvironment;
+        private readonly IWebHostEnvironment _webHostEnvironment;//Для доступа к файловой системе
+
         public EquipmentsController(SpecialResearchContext context, IWebHostEnvironment webHostEnvironment)
         {
             _context = context;

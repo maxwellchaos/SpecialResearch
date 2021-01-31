@@ -11,10 +11,11 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Session;
 using System.IO;
 using Microsoft.AspNetCore.Hosting;
-
+using Microsoft.AspNetCore.Authorization;
 
 namespace SpecialResearch.Controllers
 {
+    [Authorize]
     public class RequestsController : Controller
     {
         private readonly SpecialResearchContext _context;
@@ -32,6 +33,21 @@ namespace SpecialResearch.Controllers
             var specialResearchContext = _context.Request.Include(r => r.Stage).
                 Include(r => r.User).Include(r => r.User1).
                 OrderByDescending(r=>r.CreateDate);
+
+            if(User.IsInRole(Startup.RecieverRole))
+            {
+                return View(specialResearchContext.Where(r => r.StageID == 1));
+            }
+
+            if (User.IsInRole(Startup.TesterRole))
+            {
+                return View(specialResearchContext.Where(r => r.StageID == 2 || r.StageID == 1));
+            }
+            if (User.IsInRole(Startup.ControllerRole))
+            {
+                return View(specialResearchContext.Where(r => r.StageID == 3 || r.StageID == 2));
+            }
+
             return View(await specialResearchContext.ToListAsync());
         }
 

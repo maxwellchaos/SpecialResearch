@@ -28,14 +28,8 @@ namespace SpecialResearch.Controllers
 
         public IActionResult Index()
         {
-            int UserId = 2;
-            //Притворяемся, что залогинился Админ
-            HttpContext.Session.SetInt32("CurrentUserId", UserId);
-            string UserName = _context.User.Where(u => u.Id == UserId).FirstOrDefault().Name;
-            HttpContext.Session.SetString("CurrentUserName", UserName);
-
-
-            return RedirectToAction("index","Requests");
+            
+            return RedirectToAction("index","Requests" );
         }
 
         public IActionResult Privacy()

@@ -10,11 +10,20 @@ using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.EntityFrameworkCore;
 using SpecialResearch.Data;
+using System.Security.Claims;
 
 namespace SpecialResearch
 {
+   
+
     public class Startup
     {
+        public const string AdminRole = "admin";
+        public const string RecieverRole = "receiver";
+        public const string TesterRole = "tester";
+        public const string ControllerRole = "controller";
+        public const string ManagerRole = "manager";
+
         public Startup(IConfiguration configuration)
         {
             Configuration = configuration;
@@ -25,6 +34,35 @@ namespace SpecialResearch
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
+            services.AddAuthentication("Cookie")
+                .AddCookie("Cookie",config=>
+                {
+                    config.LoginPath = "/Users/Login";
+                });
+            services.AddAuthorization(options =>
+            {
+                options.AddPolicy("admin", builder =>
+                {
+                    builder.RequireClaim(ClaimTypes.Role, AdminRole);
+                });
+                options.AddPolicy("receiver", builder =>
+                {
+                    builder.RequireClaim(ClaimTypes.Role, RecieverRole);
+                });
+                options.AddPolicy("tester", builder =>
+                {
+                    builder.RequireClaim(ClaimTypes.Role, TesterRole);
+                });
+                options.AddPolicy("controller", builder =>
+                {
+                    builder.RequireClaim(ClaimTypes.Role, ControllerRole);
+                });
+                options.AddPolicy("manager", builder =>
+                {
+                    builder.RequireClaim(ClaimTypes.Role, ManagerRole);
+                });
+            });
+
             services.AddControllersWithViews();
 
             services.AddDbContext<SpecialResearchContext>(options =>
@@ -55,8 +93,10 @@ namespace SpecialResearch
             app.UseStaticFiles();
 
             app.UseRouting();
-
+            app.UseAuthentication();
             app.UseAuthorization();
+           
+
             app.UseSession();
             app.UseEndpoints(endpoints =>
             {

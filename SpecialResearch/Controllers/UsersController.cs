@@ -1,7 +1,11 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Security.Claims;
 using System.Threading.Tasks;
+using Microsoft.AspNetCore.Authentication;
+using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
@@ -10,6 +14,7 @@ using SpecialResearch.Models;
 
 namespace SpecialResearch.Controllers
 {
+    [Authorize(Roles ="admin")]
     public class UsersController : Controller
     {
         private readonly SpecialResearchContext _context;
@@ -18,6 +23,60 @@ namespace SpecialResearch.Controllers
         {
             _context = context;
         }
+
+
+        // GET: Users
+        [AllowAnonymous]
+        public async Task<IActionResult> LogOff()
+        {
+            await HttpContext.SignOutAsync("Cookie");
+            HttpContext.Session.SetInt32("CurrentUserId", 0);
+            return Redirect("/");
+
+        }
+
+        [AllowAnonymous]
+        // GET: Users
+        public  IActionResult Login(string ReturnUrl)
+        {
+            //var specialResearchContext = _context.User.Include(u => u.Role);
+            return View();
+     
+        }
+        [HttpPost]
+        [AllowAnonymous]
+        // GET: Users
+        public async Task<IActionResult> Login( User model)
+        {
+            if(!ModelState.IsValid)
+            {
+                ViewBag.Err = "Неверный логин или пароль";
+                return View(model);
+            }
+            string hash = SpecialResearchContext.GetHashString(model.Password);
+            User UserLogin = await _context.User.Include(u=>u.Role)
+                .Where(u => u.Login == model.Login && u.Password == hash).SingleOrDefaultAsync();
+            if (UserLogin == null )
+            {
+                ViewBag.Err = "Неверный логин или пароль";
+                return View(model);
+            }
+            var claims = new List<Claim>
+            {
+                new Claim(ClaimTypes.Name,UserLogin.Name),
+                new Claim(ClaimTypes.Role,UserLogin.Role.Name),
+            };
+            var claimeIdentity = new ClaimsIdentity(claims, "Cookie");
+            var claimePrincipal = new ClaimsPrincipal(claimeIdentity);
+            await HttpContext.SignInAsync("Cookie", claimePrincipal);
+
+            HttpContext.Session.SetInt32("CurrentUserId", UserLogin.Id);
+
+
+            return Redirect(model.ReturnUrl);
+        }
+
+      
 
         // GET: Users
         public async Task<IActionResult> Index()
@@ -61,6 +120,7 @@ namespace SpecialResearch.Controllers
         {
             if (ModelState.IsValid)
             {
+                user.Password = SpecialResearchContext.GetHashString(user.Password);
                 _context.Add(user);
                 await _context.SaveChangesAsync();
                 return RedirectToAction(nameof(Index));
@@ -82,6 +142,7 @@ namespace SpecialResearch.Controllers
             {
                 return NotFound();
             }
+            user.Password = "";
             ViewData["RoleId"] = new SelectList(_context.Role, "Id", "Name", user.RoleId);
             return View(user);
         }
@@ -102,6 +163,7 @@ namespace SpecialResearch.Controllers
             {
                 try
                 {
+                    user.Password = SpecialResearchContext.GetHashString(user.Password);
                     _context.Update(user);
                     await _context.SaveChangesAsync();
                 }

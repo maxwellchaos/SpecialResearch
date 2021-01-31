@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
@@ -11,6 +12,7 @@ using SpecialResearch.Models;
 
 namespace SpecialResearch.Controllers
 {
+    [Authorize(Roles = Startup.AdminRole + "," +Startup.ControllerRole + "," +Startup.ManagerRole + "," +Startup.TesterRole)]
     public class TestResultsController : Controller
     {
         private readonly SpecialResearchContext _context;
@@ -118,10 +120,8 @@ namespace SpecialResearch.Controllers
             }
             ViewBag.eq = _context.Equipment.Where(e => e.Id == id).FirstOrDefault();
 
-            // ViewData["EquipmentId"] = new SelectList(_context.Equipment, "Id", "Name", testResult.EquipmentId);
             ViewData["InterfaceId"] = new SelectList(_context.Interface, "Id", "Name", testResult.InterfaceId);
             ViewData["TestTypeId"] = new SelectList(_context.TestType, "Id", "TestName", testResult.TestTypeId);
-            //ViewData["UserId"] = new SelectList(_context.User, "Id", "Login", testResult.UserId);
             return View(testResult);
         }
 

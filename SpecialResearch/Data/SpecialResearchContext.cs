@@ -50,51 +50,62 @@ namespace SpecialResearch.Data
             builder.Entity<Role>().HasData(new Role
             {
                 Id = 1,
-                Name = "admin",
+                Name = Startup.AdminRole,
                 Description = "Может всё"
             });
             builder.Entity<Role>().HasData(new Role
             {
                 Id = 2,
-                Name = "receiver",
+                Name = Startup.RecieverRole,
                 Description = "Приемщик СВТ"
             });
             builder.Entity<Role>().HasData(new Role
             {
                 Id = 3,
-                Name = "tester",
+                Name = Startup.TesterRole,
                 Description = "Испытатель."
             });
             builder.Entity<Role>().HasData(new Role
             {
                 Id = 4,
-                Name = "controller",
+                Name = Startup.ControllerRole,
                 Description = "Контролер. Может выдавать предписания"
             });
             builder.Entity<Role>().HasData(new Role
             {
                 Id = 5,
-                Name = "manager",
+                Name = Startup.ManagerRole,
                 Description = "Управленец. Может все смотреть. Отчеты - его главная страница"
             });
 
             //Юзер
+
             builder.Entity<User>().HasData(new User
             {
                 Id = 1,
                 Login = "Nobody",
                 Name = "Никто",
                 RoleId = 1,
-                Password = new PasswordHasher<User>().HashPassword(null, "tewhbx9438j09v8i3ujpviwerufhw98")
-            });
+                Password = GetHashString("tewhbx9438j09v8i3ujpviwerufhw98")
+            }); ;
             builder.Entity<User>().HasData(new User
             {
                 Id = 2,
                 Login = "admin",
                 Name = "Иванов И.И.",
                 RoleId = 1,
-                Password = new PasswordHasher<User>().HashPassword(null, "admin")
+                Password = GetHashString("admin")
             }) ;
+        }
+
+        internal static string GetHashString(string text)
+        {
+            using (var sha = new System.Security.Cryptography.SHA256Managed())
+            {
+                byte[] textData = System.Text.Encoding.UTF8.GetBytes(text);
+                byte[] hash = sha.ComputeHash(textData);
+                return BitConverter.ToString(hash).Replace("-", String.Empty);
+            }
         }
 
         //Заполняю значения по умолчанию

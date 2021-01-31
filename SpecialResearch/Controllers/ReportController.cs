@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Http;
+﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using SpecialResearch.Data;
@@ -9,8 +10,8 @@ using System.Threading.Tasks;
 
 namespace SpecialResearch.Controllers
 {
-   
 
+    [Authorize (Roles = "admin,manager")]
     public class ReportController : Controller
     {
         public class yearCount
