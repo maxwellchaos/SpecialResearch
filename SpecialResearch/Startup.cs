@@ -38,6 +38,7 @@ namespace SpecialResearch
                 .AddCookie("Cookie",config=>
                 {
                     config.LoginPath = "/Users/Login";
+                    config.AccessDeniedPath = "/Users/AccessDenied";
                 });
             services.AddAuthorization(options =>
             {

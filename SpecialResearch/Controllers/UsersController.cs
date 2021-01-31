@@ -35,6 +35,15 @@ namespace SpecialResearch.Controllers
 
         }
 
+        // GET: Users
+        [AllowAnonymous]
+        public IActionResult AccessDenied()
+        {
+
+            return View();
+
+        }
+
         [AllowAnonymous]
         // GET: Users
         public  IActionResult Login(string ReturnUrl)
