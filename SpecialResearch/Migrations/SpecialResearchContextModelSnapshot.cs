@@ -313,7 +313,7 @@ namespace SpecialResearch.Migrations
                             Id = 2,
                             Login = "admin",
                             Name = "Иванов И.И.",
-                            Password = "AQAAAAEAACcQAAAAEDn5PhKtXS5i4Ph2zzjDIiD+mKrV3cFFnzqM+yGOlQ5SY2ycY7T21l89FwcvOkaABA==",
+                            Password = "8C6976E5B5410415BDE908BD4DEE15DFB167A9C873FC4BB8A81F6F2AB448A918",
                             RoleId = 1
                         });
                 });

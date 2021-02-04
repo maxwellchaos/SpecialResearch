@@ -12,6 +12,7 @@ using Microsoft.AspNetCore.Session;
 using System.IO;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Authorization;
+using OfficeOpenXml;
 
 namespace SpecialResearch.Controllers
 {
@@ -153,6 +154,36 @@ namespace SpecialResearch.Controllers
             
             return View(request);
         }
+
+        //UploadRequest
+        public async Task<IActionResult> UploadRequest( IFormFile UploadedFile)
+        {
+            if (UploadedFile != null)
+            {
+                //разбираем файл
+                
+
+                string Path = "/files/" + UploadedFile.FileName;
+               
+                using (var fileStream = new FileStream(_webHostEnvironment.WebRootPath + Path, FileMode.Create))
+                {
+                    UploadedFile.CopyTo(fileStream);
+                }
+                FileInfo fi = new FileInfo(_webHostEnvironment.WebRootPath + Path);
+                //Чтобы работал импорт из экселя
+                ExcelPackage.LicenseContext = LicenseContext.NonCommercial;
+                using (ExcelPackage excelPackage = new ExcelPackage(fi))
+                {
+                    ExcelWorksheet firstWorksheet = excelPackage.Workbook.Worksheets[1];
+                }
+                //Request request = _context.Request.Where(r => r.Id == id).FirstOrDefault();
+                //request.PhotoCopy = Path;
+                await _context.SaveChangesAsync();
+                return RedirectToAction(nameof(Index));
+            }
+            return View();
+        }
+
 
         //CloseRquest
         public async Task<IActionResult> CloseRquest(int? id)

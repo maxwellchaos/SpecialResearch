@@ -114,11 +114,14 @@
 
                         @if (item.Stage.Id == 1)
                         {
-                            @if (User.IsInRole(Startup.TesterRole) || User.IsInRole(Startup.RecieverRole))
+                            @if (User.IsInRole(Startup.TesterRole) || 
+                                User.IsInRole(Startup.RecieverRole) || 
+                                User.IsInRole(Startup.AdminRole))
                             {
                                 <a class="btn alert-info" asp-action="NextStage" asp-route-id="@item.Id">Исследования проведены</a>
                             }
-                            @if (User.IsInRole(Startup.RecieverRole) || User.IsInRole(Startup.RecieverRole))
+                            @if (User.IsInRole(Startup.RecieverRole) ||
+                               User.IsInRole(Startup.AdminRole))
                             {
                                 <a class="btn alert-info" asp-action="Edit" asp-route-id="@item.Id">Изменить</a>
                                 <a class="btn alert-info" asp-action="Delete" asp-route-id="@item.Id">Удалить</a>
@@ -127,7 +130,8 @@
 
                         @if (item.Stage.Id == 2)
                         {
-                            @if (User.IsInRole(Startup.ControllerRole) || User.IsInRole(Startup.RecieverRole))
+                            @if (User.IsInRole(Startup.ControllerRole) || 
+                               User.IsInRole(Startup.AdminRole))
                             {
                                 <a class="btn alert-info" asp-action="GetUse" asp-route-id="@item.Id">Выдать предписание</a>
                             }
@@ -135,7 +139,8 @@
 
                         @if (item.Stage.Id == 2 || item.Stage.Id == 3)
                         {
-                            @if (User.IsInRole(Startup.ManagerRole) || User.IsInRole(Startup.RecieverRole))
+                            @if (User.IsInRole(Startup.ManagerRole) || 
+                               User.IsInRole(Startup.AdminRole))
                             {
                                 <a class="btn alert-info" asp-action="CloseRquest" asp-route-id="@item.Id">Закрыть</a>
                             }

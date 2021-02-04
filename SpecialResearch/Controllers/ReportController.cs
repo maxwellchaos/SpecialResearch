@@ -14,6 +14,7 @@ namespace SpecialResearch.Controllers
     [Authorize (Roles = "admin,manager")]
     public class ReportController : Controller
     {
+        //Клаccы для отчетов
         public class yearCount
         {
             public int Count;
@@ -41,8 +42,10 @@ namespace SpecialResearch.Controllers
         }
 
         //FailTest
+        //отчет проваленных испытаний
         public async Task<IActionResult> FailTest()
         {
+            //выбрать все испытания
             var EqWithTests = _context.TestResult.Include(t => t.Equipment).Include(e => e.Equipment.Request);
          //Подсчитать количество проваленных испытаний
             foreach (var tr in EqWithTests)
