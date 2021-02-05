@@ -158,13 +158,14 @@ namespace SpecialResearch.Controllers
         //UploadRequest
         public async Task<IActionResult> UploadRequest( IFormFile UploadedFile)
         {
+
             if (UploadedFile != null)
             {
                 //разбираем файл
-                
+
 
                 string Path = "/files/" + UploadedFile.FileName;
-               
+
                 using (var fileStream = new FileStream(_webHostEnvironment.WebRootPath + Path, FileMode.Create))
                 {
                     UploadedFile.CopyTo(fileStream);
@@ -174,13 +175,44 @@ namespace SpecialResearch.Controllers
                 ExcelPackage.LicenseContext = LicenseContext.NonCommercial;
                 using (ExcelPackage excelPackage = new ExcelPackage(fi))
                 {
-                    ExcelWorksheet firstWorksheet = excelPackage.Workbook.Worksheets[1];
+                    if (excelPackage.Workbook.Worksheets.Count == 0)
+                    {
+                        throw new Exception("Ошибка открытия файла " + UploadedFile.FileName);
+                    }
+                    ExcelWorksheet firstWorksheet = excelPackage.Workbook.Worksheets[0];
+                    Request newRequest = new Request();
+                    newRequest.CreateDate = DateTime.Now;
+                    newRequest.Number = firstWorksheet.Cells["E3"].Value.ToString();
+                    newRequest.StageID = 1;
+                    newRequest.User1Id = 1;
+                    newRequest.UserId = (int)HttpContext.Session.GetInt32("CurrentUserId");//Залогинившийся юзер - создатель
+                    _context.Add(newRequest);
+                    _context.SaveChanges();
+
+                    //Берем количество оборудования из нужной ячейки
+                    double count = (double)firstWorksheet.Cells["C4"].Value;
+                    for (int i = 0;i<count;i++)
+                    {
+                        Equipment eq = new Equipment();
+                    }
+                    // создание и добавление моделей
+                    //Team t1 = new Team { Name = "Барселона" };
+                    //Team t2 = new Team { Name = "Реал Мадрид" };
+                    //db.Teams.Add(t1);
+                    //db.Teams.Add(t2);
+                    //db.SaveChanges();
+                    //Player pl1 = new Player { Name = "Роналду", Age = 31, Position = "Нападающий", Team = t2 };
+                    //Player pl2 = new Player { Name = "Месси", Age = 28, Position = "Нападающий", Team = t1 };
+                    //Player pl3 = new Player { Name = "Хави", Age = 34, Position = "Полузащитник", Team = t1 };
+                    //db.Players.AddRange(new List<Player> { pl1, pl2, pl3 });
+                    //db.SaveChanges();
+
                 }
-                //Request request = _context.Request.Where(r => r.Id == id).FirstOrDefault();
-                //request.PhotoCopy = Path;
+
                 await _context.SaveChangesAsync();
                 return RedirectToAction(nameof(Index));
             }
+
             return View();
         }
 
