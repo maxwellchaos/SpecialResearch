@@ -74,6 +74,7 @@ namespace SpecialResearch.Controllers
             {
                 new Claim(ClaimTypes.Name,UserLogin.Name),
                 new Claim(ClaimTypes.Role,UserLogin.Role.Name),
+                new Claim(ClaimTypes.NameIdentifier,UserLogin.Id.ToString())
             };
             var claimeIdentity = new ClaimsIdentity(claims, "Cookie");
             var claimePrincipal = new ClaimsPrincipal(claimeIdentity);

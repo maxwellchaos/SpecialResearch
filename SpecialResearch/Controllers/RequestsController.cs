@@ -13,6 +13,7 @@ using System.IO;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Authorization;
 using OfficeOpenXml;
+using System.Security.Claims;
 
 namespace SpecialResearch.Controllers
 {
@@ -102,14 +103,24 @@ namespace SpecialResearch.Controllers
         // GET: Requests/Create
         public IActionResult Create()
         {
-            //ViewData["StageID"] = new SelectList(_context.Stage, "Id", "StageName");
-            //ViewData["UserId"] = new SelectList(_context.User, "Id", "Login");
-            //ViewData["User1Id"] = new SelectList(_context.User, "Id", "Login");
             Request request = new Request();
             //Ставим данные по умолчанию для создания заявки
             request.CreateDate = DateTime.Now;//Сейчас
-            request.UserId = (int)HttpContext.Session.GetInt32("CurrentUserId");//Залогинившийся юзер - создатель
-           ViewBag.UserName = _context.User.Where(u => u.Id == request.UserId).FirstOrDefault().Name;
+            int id = Convert.ToInt32(User.Claims.FirstOrDefault(c => c.Type == ClaimTypes.NameIdentifier).Value);
+            request.UserId = id;
+            //request.UserId = (int)HttpContext.Session.GetInt32("CurrentUserId");//Залогинившийся юзер - создатель
+            int lastId = 0;
+            try
+            {
+                lastId = _context.Request.Max(r => r.Id);
+            }
+            catch(Exception e)
+            {
+
+            }
+            request.Number = "УК-" + (lastId + 1).ToString()+"-" + DateTime.Now.ToString("yyyy");
+            ViewBag.UserName = _context.User.Where(u => u.Id == request.UserId).FirstOrDefault().Name;
+
             return View(request);
         }
 
@@ -185,15 +196,29 @@ namespace SpecialResearch.Controllers
                     newRequest.Number = firstWorksheet.Cells["E3"].Value.ToString();
                     newRequest.StageID = 1;
                     newRequest.User1Id = 1;
-                    newRequest.UserId = (int)HttpContext.Session.GetInt32("CurrentUserId");//Залогинившийся юзер - создатель
+                    int id = Convert.ToInt32(User.Claims.FirstOrDefault(c => c.Type == ClaimTypes.NameIdentifier).Value);
+                    newRequest.UserId = id;
+                   // newRequest.UserId = (int)HttpContext.Session.GetInt32("CurrentUserId");//Залогинившийся юзер - создатель
                     _context.Add(newRequest);
                     _context.SaveChanges();
 
                     //Берем количество оборудования из нужной ячейки
                     double count = (double)firstWorksheet.Cells["C4"].Value;
+                    double count1 = (double)firstWorksheet.Cells[4,3].Value;
                     for (int i = 0;i<count;i++)
                     {
                         Equipment eq = new Equipment();
+                        eq.Name = firstWorksheet.Cells[5 + i, 4].Value.ToString();
+                        if(firstWorksheet.Cells[5 + i, 5].Value != null)
+                            eq.Manufacturer = firstWorksheet.Cells[5 + i, 5].Value.ToString();
+                        if (firstWorksheet.Cells[5 + i, 6].Value != null)
+                            eq.Model = firstWorksheet.Cells[5 + i, 6].Value.ToString();
+                        if (firstWorksheet.Cells[5 + i, 7].Value != null)
+                            eq.SerialNumber = firstWorksheet.Cells[5 + i, 7].Value.ToString();
+                        if (firstWorksheet.Cells[5 + i, 8].Value != null)
+                            eq.OperatingMode = firstWorksheet.Cells[5 + i, 8].Value.ToString();
+                        eq.Request = newRequest;
+                        _context.Add(eq);
                     }
                     // создание и добавление моделей
                     //Team t1 = new Team { Name = "Барселона" };
