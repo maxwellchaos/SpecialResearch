@@ -3,7 +3,7 @@ using Microsoft.EntityFrameworkCore.Migrations;
 
 namespace SpecialResearch.Migrations
 {
-    public partial class Pic : Migration
+    public partial class find : Migration
     {
         protected override void Up(MigrationBuilder migrationBuilder)
         {
@@ -93,9 +93,9 @@ namespace SpecialResearch.Migrations
                     Number = table.Column<string>(nullable: false),
                     CreateDate = table.Column<DateTime>(nullable: false),
                     StageID = table.Column<int>(nullable: false),
-                    UserId = table.Column<int>(nullable: false),
-                    User1Id = table.Column<int>(nullable: false),
-                    UseOrder = table.Column<int>(nullable: false),
+                    CreatorId = table.Column<int>(nullable: false),
+                    ControlerId = table.Column<int>(nullable: false),
+                    UseOrder = table.Column<string>(nullable: true),
                     EndDate = table.Column<DateTime>(nullable: false),
                     PhotoCopy = table.Column<string>(nullable: true)
                 },
@@ -103,23 +103,23 @@ namespace SpecialResearch.Migrations
                 {
                     table.PrimaryKey("PK_Request", x => x.Id);
                     table.ForeignKey(
+                        name: "FK_Request_User_ControlerId",
+                        column: x => x.ControlerId,
+                        principalTable: "User",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                    table.ForeignKey(
+                        name: "FK_Request_User_CreatorId",
+                        column: x => x.CreatorId,
+                        principalTable: "User",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.NoAction);
+                    table.ForeignKey(
                         name: "FK_Request_Stage_StageID",
                         column: x => x.StageID,
                         principalTable: "Stage",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
-                    table.ForeignKey(
-                        name: "FK_Request_User_User1Id",
-                        column: x => x.User1Id,
-                        principalTable: "User",
-                        principalColumn: "Id",
-                        onDelete: ReferentialAction.Cascade);
-                    table.ForeignKey(
-                        name: "FK_Request_User_UserId",
-                        column: x => x.UserId,
-                        principalTable: "User",
-                        principalColumn: "Id",
-                        onDelete: ReferentialAction.NoAction);
                 });
 
             migrationBuilder.CreateTable(
@@ -218,7 +218,7 @@ namespace SpecialResearch.Migrations
             migrationBuilder.InsertData(
                 table: "User",
                 columns: new[] { "Id", "Login", "Name", "Password", "RoleId" },
-                values: new object[] { 1, "Nobody", "Никто", "AQAAAAEAACcQAAAAEAEmc0ICNnJCFWz1RTCr3mfPgybwsJ2f0/LFytaBgSxvXd06fh5PAcripI2ohg7OUQ==", 1 });
+                values: new object[] { 1, "Nobody", "Никто", "1443E1C37D06715738B11A27A4B0A5818466ECDA4EBD2E857A0DDEEA24D4BA84", 1 });
 
             migrationBuilder.InsertData(
                 table: "User",
@@ -231,19 +231,19 @@ namespace SpecialResearch.Migrations
                 column: "RequestId");
 
             migrationBuilder.CreateIndex(
+                name: "IX_Request_ControlerId",
+                table: "Request",
+                column: "ControlerId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_Request_CreatorId",
+                table: "Request",
+                column: "CreatorId");
+
+            migrationBuilder.CreateIndex(
                 name: "IX_Request_StageID",
                 table: "Request",
                 column: "StageID");
-
-            migrationBuilder.CreateIndex(
-                name: "IX_Request_User1Id",
-                table: "Request",
-                column: "User1Id");
-
-            migrationBuilder.CreateIndex(
-                name: "IX_Request_UserId",
-                table: "Request",
-                column: "UserId");
 
             migrationBuilder.CreateIndex(
                 name: "IX_TestResult_EquipmentId",
@@ -289,10 +289,10 @@ namespace SpecialResearch.Migrations
                 name: "Request");
 
             migrationBuilder.DropTable(
-                name: "Stage");
+                name: "User");
 
             migrationBuilder.DropTable(
-                name: "User");
+                name: "Stage");
 
             migrationBuilder.DropTable(
                 name: "Role");

@@ -118,40 +118,48 @@ namespace SpecialResearch.Controllers
         public ActionResult ClosedRequest()
         {
             List<yearCount> YearList = new List<yearCount>();
-            DateTime FirstDate = _context.Request.Where(r => r.StageID == 4).
-                Where(r => r.EndDate != null).Max(r => r.EndDate);
-            DateTime LastDate = _context.Request.Where(r => r.StageID == 4).
-                Where(r => r.EndDate != null).Min(r => r.EndDate);
-
-            //перебрать годы
-            for(int year = FirstDate.Year; year<=LastDate.Year;year++)
+            try
             {
-                yearCount year1 = new yearCount();
-                year1.Year = year;
-                DateTime firstYearDate = new DateTime(year, 1, 1, 0, 0, 0);
-                DateTime lastYearDate = firstYearDate.AddYears(1).AddMilliseconds(-1);
+               
+                DateTime FirstDate = _context.Request.Where(r => r.StageID == 4).
+                    Where(r => r.EndDate != null).Max(r => r.EndDate);
+                DateTime LastDate = _context.Request.Where(r => r.StageID == 4).
+                    Where(r => r.EndDate != null).Min(r => r.EndDate);
 
-                year1.Count = _context.Request.Where(r => r.StageID == 4).Where(r => r.EndDate != null)
-                    .Where(r=>r.EndDate > firstYearDate)
-                    .Where(r => r.EndDate < lastYearDate)
-                    .Count();
-
-                year1.MonthsCount = new List<MonthCount>();
-                //перебрать месяцы
-                for(int month = 1; month<=12;month++)
+                //перебрать годы
+                for (int year = FirstDate.Year; year <= LastDate.Year; year++)
                 {
-                    MonthCount mc= new MonthCount();
-                    mc.MonthsName = (new DateTime(year, month, 1)).ToString("MMMM");
-                    DateTime firstMonthDate = new DateTime(year, month, 1, 0, 0, 0);
-                    DateTime lastMonthDate = firstMonthDate.AddMonths(1).AddMilliseconds(-1);
-                    mc.Count = _context.Request.Where(r => r.StageID == 4).Where(r => r.EndDate != null)
-                    .Where(r => r.EndDate > firstMonthDate)
-                    .Where(r => r.EndDate < lastMonthDate)
-                    .Count();
-                    year1.MonthsCount.Add(mc);
-                }
-                YearList.Add(year1);
+                    yearCount year1 = new yearCount();
+                    year1.Year = year;
+                    DateTime firstYearDate = new DateTime(year, 1, 1, 0, 0, 0);
+                    DateTime lastYearDate = firstYearDate.AddYears(1).AddMilliseconds(-1);
 
+                    year1.Count = _context.Request.Where(r => r.StageID == 4).Where(r => r.EndDate != null)
+                        .Where(r => r.EndDate > firstYearDate)
+                        .Where(r => r.EndDate < lastYearDate)
+                        .Count();
+
+                    year1.MonthsCount = new List<MonthCount>();
+                    //перебрать месяцы
+                    for (int month = 1; month <= 12; month++)
+                    {
+                        MonthCount mc = new MonthCount();
+                        mc.MonthsName = (new DateTime(year, month, 1)).ToString("MMMM");
+                        DateTime firstMonthDate = new DateTime(year, month, 1, 0, 0, 0);
+                        DateTime lastMonthDate = firstMonthDate.AddMonths(1).AddMilliseconds(-1);
+                        mc.Count = _context.Request.Where(r => r.StageID == 4).Where(r => r.EndDate != null)
+                        .Where(r => r.EndDate > firstMonthDate)
+                        .Where(r => r.EndDate < lastMonthDate)
+                        .Count();
+                        year1.MonthsCount.Add(mc);
+                    }
+                    YearList.Add(year1);
+
+                }
+            }
+            catch(Exception e)
+            {
+                YearList.Clear();
             }
             ViewBag.y = YearList;
 

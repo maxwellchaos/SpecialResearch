@@ -70,8 +70,8 @@ namespace SpecialResearch.Controllers
             var ReqContext = _context.Request
                 .Where(p => p.Id == id)
                 .Include(u => u.Stage)
-                .Include(u => u.User)
-                .Include(u => u.User1).ToList();
+                .Include(u => u.Creator)
+                .Include(u => u.Controler).ToList();
             Request rq = _context.Request.Where(p => p.Id == id).FirstOrDefault();
             ViewBag.rq = rq;
             return View(await specialResearchContext.ToListAsync());

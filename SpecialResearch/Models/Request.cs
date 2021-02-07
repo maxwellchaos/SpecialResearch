@@ -28,20 +28,18 @@ namespace SpecialResearch.Models
 
 
         [Display(Name = "Создатель заявки")]
-        public int UserId { get; set; }
+        public int CreatorId { get; set; }
         [Display(Name = "Создатель заявки")]
-        public User User { get; set; }
+        public User Creator { get; set; }
 
         [Display(Name = "Выдавший предписание")]
-        public int User1Id { get; set; }
+        public int ControlerId { get; set; }
         [Display(Name = "Выдавший предписание")]
-        public User User1 { get; set; }
+        public User Controler { get; set; }
 
         [Display(Name = "Предписание на эксплуатацию")]
-        public int UseOrder { get; set; }
+        public string UseOrder { get; set; }
 
-        //[Display(Name = "Выдавший предписание")]
-        //public int OrderCreator { get; set; }
 
         [Display(Name = "Дата завершения")]
         public DateTime EndDate { get; set; }

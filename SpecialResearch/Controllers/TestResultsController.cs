@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Security.Claims;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
@@ -77,9 +78,12 @@ namespace SpecialResearch.Controllers
             ViewBag.eq = _context.Equipment.Where(e => e.Id == id).FirstOrDefault();
             ViewData["InterfaceId"] = new SelectList(_context.Interface, "Id", "Name");
             ViewData["TestTypeId"] = new SelectList(_context.TestType, "Id", "TestName");
-            // ViewData["UserId"] = new SelectList(_context.User, "Id", "Login");
+            // ViewData["CreatorId"] = new SelectList(_context.User, "Id", "Login");
             TestResult testResult = new TestResult();
-            testResult.UserId = (int)HttpContext.Session.GetInt32("CurrentUserId");//Залогинившийся юзер
+
+            int CreatorId = Convert.ToInt32(User.Claims.FirstOrDefault(c => c.Type == ClaimTypes.NameIdentifier).Value);
+            testResult.UserId = CreatorId;//Залогинившийся юзер
+
             testResult.EquipmentId = (int)id;
             testResult.Date = DateTime.Now;
             return View(testResult);
@@ -90,7 +94,7 @@ namespace SpecialResearch.Controllers
         // more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create([Bind("EquipmentId,Result,InterfaceId,SignalFound,TestIsOk,Date,frequency,TestTypeId,UserId")] TestResult testResult)
+        public async Task<IActionResult> Create([Bind("EquipmentId,Result,InterfaceId,SignalFound,TestIsOk,Date,frequency,TestTypeId,CreatorId")] TestResult testResult)
         {
             if (ModelState.IsValid)
             {
@@ -101,7 +105,7 @@ namespace SpecialResearch.Controllers
             ViewData["EquipmentId"] = new SelectList(_context.Equipment, "Id", "Name", testResult.EquipmentId);
             ViewData["InterfaceId"] = new SelectList(_context.Interface, "Id", "Name", testResult.InterfaceId);
             ViewData["TestTypeId"] = new SelectList(_context.TestType, "Id", "TestName", testResult.TestTypeId);
-            ViewData["UserId"] = new SelectList(_context.User, "Id", "Login", testResult.UserId);
+            ViewData["CreatorId"] = new SelectList(_context.User, "Id", "Login", testResult.UserId);
             return View(testResult);
         }
 
@@ -130,7 +134,7 @@ namespace SpecialResearch.Controllers
         // more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(int id, [Bind("Id,EquipmentId,Result,InterfaceId,SignalFound,TestIsOk,Date,frequency,TestTypeId,UserId")] TestResult testResult)
+        public async Task<IActionResult> Edit(int id, [Bind("Id,EquipmentId,Result,InterfaceId,SignalFound,TestIsOk,Date,frequency,TestTypeId,CreatorId")] TestResult testResult)
         {
             if (id != testResult.Id)
             {
@@ -160,7 +164,7 @@ namespace SpecialResearch.Controllers
             ViewData["EquipmentId"] = new SelectList(_context.Equipment, "Id", "Name", testResult.EquipmentId);
             ViewData["InterfaceId"] = new SelectList(_context.Interface, "Id", "Name", testResult.InterfaceId);
             ViewData["TestTypeId"] = new SelectList(_context.TestType, "Id", "TestName", testResult.TestTypeId);
-            ViewData["UserId"] = new SelectList(_context.User, "Id", "Login", testResult.UserId);
+            ViewData["CreatorId"] = new SelectList(_context.User, "Id", "Login", testResult.UserId);
             return View(testResult);
         }
 

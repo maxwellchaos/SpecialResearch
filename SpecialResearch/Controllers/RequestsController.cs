@@ -29,28 +29,64 @@ namespace SpecialResearch.Controllers
             _context = context;
         }
 
+
         // GET: Requests
-        public async Task<IActionResult> Index()
+        public async Task<IActionResult> Index(string template = null)
         {
+            if (template != null)
+                ViewBag.Template = template;
+           
             var specialResearchContext = _context.Request.Include(r => r.Stage).
-                Include(r => r.User).Include(r => r.User1).
+                Include(r => r.Creator).Include(r => r.Controler).
                 OrderByDescending(r=>r.CreateDate);
 
             if(User.IsInRole(Startup.RecieverRole))
             {
-                return View(specialResearchContext.Where(r => r.StageID == 1));
+                if (template == null)
+                {
+                    return View(specialResearchContext.Where(r => r.StageID == 1));
+                }
+                else
+                {
+                    return View(specialResearchContext.Where(r => r.StageID == 1 && r.Number.Contains(template)));
+                }
+                
             }
 
             if (User.IsInRole(Startup.TesterRole))
             {
-                return View(specialResearchContext.Where(r => r.StageID == 2 || r.StageID == 1));
+                if (template == null)
+                {
+                    return View(specialResearchContext.Where(r => r.StageID == 2 || r.StageID == 1));
+                }
+                else
+                {
+                    return View(specialResearchContext.Where(r => (r.StageID == 2 || r.StageID == 1) && r.Number.Contains(template)));
+                }
+
+               
             }
             if (User.IsInRole(Startup.ControllerRole))
             {
-                return View(specialResearchContext.Where(r => r.StageID == 3 || r.StageID == 2));
+                if (template == null)
+                {
+                    return View(specialResearchContext.Where(r => r.StageID == 2 || r.StageID == 3));
+                }
+                else
+                {
+                    return View(specialResearchContext.Where(r => (r.StageID == 2 || r.StageID == 3) && r.Number.Contains(template)));
+                }
+               
             }
-
-            return View(await specialResearchContext.ToListAsync());
+            if (template == null)
+            {
+                return View(await specialResearchContext.ToListAsync());
+            }
+            else
+            {
+                return View(specialResearchContext.Where(r => r.Number.Contains(template)));
+            }
+            
         }
 
         // GET: Requests/Details/5
@@ -63,8 +99,8 @@ namespace SpecialResearch.Controllers
 
             var request = await _context.Request
                 .Include(r => r.Stage)
-                .Include(r => r.User)
-                .Include(r => r.User1)
+                .Include(r => r.Creator)
+                .Include(r => r.Controler)
                 .FirstOrDefaultAsync(m => m.Id == id);
             if (request == null)
             {
@@ -107,8 +143,8 @@ namespace SpecialResearch.Controllers
             //Ставим данные по умолчанию для создания заявки
             request.CreateDate = DateTime.Now;//Сейчас
             int id = Convert.ToInt32(User.Claims.FirstOrDefault(c => c.Type == ClaimTypes.NameIdentifier).Value);
-            request.UserId = id;
-            //request.UserId = (int)HttpContext.Session.GetInt32("CurrentUserId");//Залогинившийся юзер - создатель
+            request.CreatorId = id;
+            //request.CreatorId = (int)HttpContext.Session.GetInt32("CurrentUserId");//Залогинившийся юзер - создатель
             int lastId = 0;
             try
             {
@@ -119,7 +155,7 @@ namespace SpecialResearch.Controllers
 
             }
             request.Number = "УК-" + (lastId + 1).ToString()+"-" + DateTime.Now.ToString("yyyy");
-            ViewBag.UserName = _context.User.Where(u => u.Id == request.UserId).FirstOrDefault().Name;
+            ViewBag.UserName = _context.User.Where(u => u.Id == request.CreatorId).FirstOrDefault().Name;
 
             return View(request);
         }
@@ -129,11 +165,11 @@ namespace SpecialResearch.Controllers
         // more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create([Bind("Id,Number,CreateDate,StageID,UserId,User1Id,UseOrder,EndDate,PhotoCopy")] Request request)
+        public async Task<IActionResult> Create([Bind("Id,Number,CreateDate,StageID,CreatorId,ControllerId,UseOrder,EndDate,PhotoCopy")] Request request)
         {
-            request.User1Id = 1;
+            request.ControlerId = 1;
             request.StageID = 1;
-            //request.UserId = 2;
+            //request.CreatorId = 2;
             if (ModelState.IsValid)
             {
                 _context.Add(request);
@@ -141,8 +177,8 @@ namespace SpecialResearch.Controllers
                 return RedirectToAction(nameof(Index));
             }
             ViewData["StageID"] = new SelectList(_context.Stage, "Id", "StageName", request.StageID);
-            ViewData["UserId"] = new SelectList(_context.User, "Id", "Login", request.UserId);
-            ViewData["User1Id"] = new SelectList(_context.User, "Id", "Login", request.User1Id);
+            ViewData["CreatorId"] = new SelectList(_context.User, "Id", "Login", request.CreatorId);
+            ViewData["ControlerId"] = new SelectList(_context.User, "Id", "Login", request.ControlerId);
             return View(request);
         }
 
@@ -160,8 +196,8 @@ namespace SpecialResearch.Controllers
                 return NotFound();
             }
             ViewData["StageID"] = new SelectList(_context.Stage, "Id", "StageName", request.StageID);
-            ViewData["UserId"] = new SelectList(_context.User, "Id", "Login", request.UserId);
-            ViewData["User1Id"] = new SelectList(_context.User, "Id", "Login", request.User1Id);
+            ViewData["CreatorId"] = new SelectList(_context.User, "Id", "Login", request.CreatorId);
+            ViewData["ControlerId"] = new SelectList(_context.User, "Id", "Login", request.ControlerId);
             
             return View(request);
         }
@@ -195,10 +231,10 @@ namespace SpecialResearch.Controllers
                     newRequest.CreateDate = DateTime.Now;
                     newRequest.Number = firstWorksheet.Cells["E3"].Value.ToString();
                     newRequest.StageID = 1;
-                    newRequest.User1Id = 1;
+                    newRequest.ControlerId = 1;
                     int id = Convert.ToInt32(User.Claims.FirstOrDefault(c => c.Type == ClaimTypes.NameIdentifier).Value);
-                    newRequest.UserId = id;
-                   // newRequest.UserId = (int)HttpContext.Session.GetInt32("CurrentUserId");//Залогинившийся юзер - создатель
+                    newRequest.CreatorId = id;
+                   // newRequest.CreatorId = (int)HttpContext.Session.GetInt32("CurrentUserId");//Залогинившийся юзер - создатель
                     _context.Add(newRequest);
                     _context.SaveChanges();
 
@@ -270,6 +306,8 @@ namespace SpecialResearch.Controllers
             }
             return RedirectToAction(nameof(Index));
         }
+
+        
         //GetUse
         public async Task<IActionResult> GetUse(int? id)
         {
@@ -284,9 +322,31 @@ namespace SpecialResearch.Controllers
             {
                 return NotFound();
             }
+           
+           
+            return View();
+        }
+
+        //GetUse
+        [HttpPost]
+        public async Task<IActionResult> GetUse(int? id,string UseOrder)
+        {
+            if (id == null)
+            {
+                return NotFound();
+            }
+
+            var request = await _context.Request.FindAsync(id);
+
+            if (request == null)
+            {
+                return NotFound();
+            }
             request.StageID = 3;
-            request.UseOrder = 1;
-            request.User1Id = (int)HttpContext.Session.GetInt32("CurrentUserId");//Залогинившийся юзер - Выдал предписание
+
+            request.UseOrder = UseOrder;
+            int ControlerId = Convert.ToInt32(User.Claims.FirstOrDefault(c => c.Type == ClaimTypes.NameIdentifier).Value);
+            request.ControlerId = ControlerId;//Залогинившийся юзер - Выдал предписание
 
             try
             {
@@ -299,6 +359,7 @@ namespace SpecialResearch.Controllers
             }
             return RedirectToAction(nameof(Index));
         }
+
         // GET: Requests/Edit/5
         public async Task<IActionResult> NextStage(int? id)
         {
@@ -336,7 +397,7 @@ namespace SpecialResearch.Controllers
         // more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(int id, [Bind("Id,Number,CreateDate,StageID,UserId,User1Id,UseOrder,EndDate,PhotoCopy")] Request request)
+        public async Task<IActionResult> Edit(int id, [Bind("Id,Number,CreateDate,StageID,CreatorId,ControllerId,UseOrder,EndDate,PhotoCopy")] Request request)
         {
             if (id != request.Id)
             {
@@ -364,8 +425,8 @@ namespace SpecialResearch.Controllers
                 return RedirectToAction(nameof(Index));
             }
             ViewData["StageID"] = new SelectList(_context.Stage, "Id", "StageName", request.StageID);
-            ViewData["UserId"] = new SelectList(_context.User, "Id", "Login", request.UserId);
-            ViewData["User1Id"] = new SelectList(_context.User, "Id", "Login", request.User1Id);
+            ViewData["CreatorId"] = new SelectList(_context.User, "Id", "Login", request.CreatorId);
+            ViewData["ControlerId"] = new SelectList(_context.User, "Id", "Login", request.ControlerId);
             return View(request);
         }
 
@@ -379,8 +440,8 @@ namespace SpecialResearch.Controllers
 
             var request = await _context.Request
                 .Include(r => r.Stage)
-                .Include(r => r.User)
-                .Include(r => r.User1)
+                .Include(r => r.Creator)
+                .Include(r => r.Controler)
                 .FirstOrDefaultAsync(m => m.Id == id);
             if (request == null)
             {

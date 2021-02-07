@@ -81,8 +81,14 @@ namespace SpecialResearch.Migrations
                         .HasColumnType("int")
                         .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
 
+                    b.Property<int>("ControlerId")
+                        .HasColumnType("int");
+
                     b.Property<DateTime>("CreateDate")
                         .HasColumnType("datetime2");
+
+                    b.Property<int>("CreatorId")
+                        .HasColumnType("int");
 
                     b.Property<DateTime>("EndDate")
                         .HasColumnType("datetime2");
@@ -97,22 +103,16 @@ namespace SpecialResearch.Migrations
                     b.Property<int>("StageID")
                         .HasColumnType("int");
 
-                    b.Property<int>("UseOrder")
-                        .HasColumnType("int");
-
-                    b.Property<int>("User1Id")
-                        .HasColumnType("int");
-
-                    b.Property<int>("UserId")
-                        .HasColumnType("int");
+                    b.Property<string>("UseOrder")
+                        .HasColumnType("nvarchar(max)");
 
                     b.HasKey("Id");
 
+                    b.HasIndex("ControlerId");
+
+                    b.HasIndex("CreatorId");
+
                     b.HasIndex("StageID");
-
-                    b.HasIndex("User1Id");
-
-                    b.HasIndex("UserId");
 
                     b.ToTable("Request");
                 });
@@ -305,7 +305,7 @@ namespace SpecialResearch.Migrations
                             Id = 1,
                             Login = "Nobody",
                             Name = "Никто",
-                            Password = "AQAAAAEAACcQAAAAEAEmc0ICNnJCFWz1RTCr3mfPgybwsJ2f0/LFytaBgSxvXd06fh5PAcripI2ohg7OUQ==",
+                            Password = "1443E1C37D06715738B11A27A4B0A5818466ECDA4EBD2E857A0DDEEA24D4BA84",
                             RoleId = 1
                         },
                         new
@@ -329,21 +329,21 @@ namespace SpecialResearch.Migrations
 
             modelBuilder.Entity("SpecialResearch.Models.Request", b =>
                 {
+                    b.HasOne("SpecialResearch.Models.User", "Controler")
+                        .WithMany()
+                        .HasForeignKey("ControlerId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("SpecialResearch.Models.User", "Creator")
+                        .WithMany()
+                        .HasForeignKey("CreatorId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
                     b.HasOne("SpecialResearch.Models.Stage", "Stage")
                         .WithMany()
                         .HasForeignKey("StageID")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.HasOne("SpecialResearch.Models.User", "User1")
-                        .WithMany()
-                        .HasForeignKey("User1Id")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.HasOne("SpecialResearch.Models.User", "User")
-                        .WithMany()
-                        .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
                 });

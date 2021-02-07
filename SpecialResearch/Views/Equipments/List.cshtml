@@ -38,7 +38,7 @@
                 @ViewBag.rq.CreateDate
             </td>
             <td>
-                @ViewBag.rq.User.Name
+                @ViewBag.rq.Creator.Name
             </td>
             <td>
                 @ViewBag.rq.Stage.StageName
@@ -59,7 +59,7 @@
             </td>
             <td>
                 @{string UserName = "";
-                    if (ViewBag.rq.User1.Id != 1) UserName = ViewBag.rq.User1.Name;
+                    if (ViewBag.rq.Controler.Id != 1) UserName = ViewBag.rq.Controler.Name;
                 }
                 @UserName
             </td>
