@@ -13,10 +13,12 @@ using SpecialResearch.Models;
 
 namespace SpecialResearch.Controllers
 {
+    //доступно всем кроме приемщика
+    //контроллер испытаний
     [Authorize(Roles = Startup.AdminRole + "," +Startup.ControllerRole + "," +Startup.ManagerRole + "," +Startup.TesterRole)]
     public class TestResultsController : Controller
     {
-        private readonly SpecialResearchContext _context;
+        private readonly SpecialResearchContext _context;//бд
 
         public TestResultsController(SpecialResearchContext context)
         {
@@ -31,7 +33,7 @@ namespace SpecialResearch.Controllers
         }
 
 
-
+        //Список испытаний по id оборудования
         //// GET: Equipments
         public async Task<IActionResult> List(int? id)
         {
@@ -43,11 +45,17 @@ namespace SpecialResearch.Controllers
                 .Where(e => e.EquipmentId == id);
             Equipment eq = _context.Equipment.Where(e => e.Id == id).FirstOrDefault();
             ViewBag.eq = eq;
-            String ReqNum = _context.Request.Where(r => r.Id == eq.RequestId).FirstOrDefault().Number;
-            ViewBag.ReqNum = ReqNum;
+            var Request = _context.Request.Where(r => r.Id == eq.RequestId).FirstOrDefault();
+            
+            ViewBag.ReqNum = Request.Number;
+           
+            ViewBag.StageID = Request.StageID;
+
             return View(await specialResearchContext.ToListAsync());
         }
 
+
+        //детализация испытания
         // GET: TestResults/Details/5
         public async Task<IActionResult> Details(int? id)
         {
@@ -71,6 +79,7 @@ namespace SpecialResearch.Controllers
         }
 
        
+        //создание испытания - страница
         // GET: TestResults/Create
         public IActionResult Create(int? id)//equipment id
         {
@@ -89,12 +98,14 @@ namespace SpecialResearch.Controllers
             return View(testResult);
         }
 
+
+        //создание испытания - схраниение в БД
         // POST: TestResults/Create
         // To protect from overposting attacks, enable the specific properties you want to bind to, for 
         // more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create([Bind("EquipmentId,Result,InterfaceId,SignalFound,TestIsOk,Date,frequency,TestTypeId,CreatorId")] TestResult testResult)
+        public async Task<IActionResult> Create([Bind("UserId,EquipmentId,Result,InterfaceId,SignalFound,TestIsOk,Date,frequency,TestTypeId,CreatorId")] TestResult testResult)
         {
             if (ModelState.IsValid)
             {
@@ -109,6 +120,7 @@ namespace SpecialResearch.Controllers
             return View(testResult);
         }
 
+        //Изменить испытание
         // GET: TestResults/Edit/5
         public async Task<IActionResult> Edit(int? id)
         {
@@ -129,6 +141,7 @@ namespace SpecialResearch.Controllers
             return View(testResult);
         }
 
+        //сохранить изменения
         // POST: TestResults/Edit/5
         // To protect from overposting attacks, enable the specific properties you want to bind to, for 
         // more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
@@ -168,6 +181,7 @@ namespace SpecialResearch.Controllers
             return View(testResult);
         }
 
+        //удалить испытание
         // GET: TestResults/Delete/5
         public async Task<IActionResult> Delete(int? id)
         {
@@ -190,6 +204,8 @@ namespace SpecialResearch.Controllers
             return View(testResult);
         }
 
+
+        //ПОдтверждение удаления испытания
         // POST: TestResults/Delete/5
         [HttpPost, ActionName("Delete")]
         [ValidateAntiForgeryToken]

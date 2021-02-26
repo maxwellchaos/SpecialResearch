@@ -11,22 +11,26 @@ using SpecialResearch.Models;
 
 namespace SpecialResearch.Controllers
 {
+    //доступен для испытателя и админа
     [Authorize(Roles = "admin,tester")]
-    public class InterfacesController : Controller
+    public class InterfacesController : Controller//Контроллер справочника по интерфейсам
     {
-        private readonly SpecialResearchContext _context;
+        private readonly SpecialResearchContext _context;//база данных
 
         public InterfacesController(SpecialResearchContext context)
         {
             _context = context;
         }
 
+        //список интерфейсов
         // GET: Interfaces
         public async Task<IActionResult> Index()
         {
             return View(await _context.Interface.ToListAsync());
         }
 
+
+        //не используется 
         // GET: Interfaces/Details/5
         public async Task<IActionResult> Details(int? id)
         {
@@ -45,12 +49,14 @@ namespace SpecialResearch.Controllers
             return View(@interface);
         }
 
+        //Добавление интерфейса - страница добавления
         // GET: Interfaces/Create
         public IActionResult Create()
         {
             return View();
         }
 
+        //получимли данные со страницы и записали в БД
         // POST: Interfaces/Create
         // To protect from overposting attacks, enable the specific properties you want to bind to, for 
         // more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
@@ -67,6 +73,7 @@ namespace SpecialResearch.Controllers
             return View(@interface);
         }
 
+        //изменить интерфейс
         // GET: Interfaces/Edit/5
         public async Task<IActionResult> Edit(int? id)
         {
@@ -83,6 +90,7 @@ namespace SpecialResearch.Controllers
             return View(@interface);
         }
 
+        //получимли данные со страницы и записали в БД
         // POST: Interfaces/Edit/5
         // To protect from overposting attacks, enable the specific properties you want to bind to, for 
         // more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
@@ -118,6 +126,7 @@ namespace SpecialResearch.Controllers
             return View(@interface);
         }
 
+        //данные для страницы удаления
         // GET: Interfaces/Delete/5
         public async Task<IActionResult> Delete(int? id)
         {
@@ -136,6 +145,7 @@ namespace SpecialResearch.Controllers
             return View(@interface);
         }
 
+        //удаление подтверждено. удаляю из БД
         // POST: Interfaces/Delete/5
         [HttpPost, ActionName("Delete")]
         [ValidateAntiForgeryToken]

@@ -11,6 +11,10 @@ using SpecialResearch.Models;
 
 namespace SpecialResearch.Controllers
 {
+    //контроллер стадий заявки
+    //удаление и созданеие не доступно из интерфейса. можно только отредактировать описания и просмотреть.
+    //автосгенерированный код не трогал
+    //доступ только у админа
     [Authorize (Roles = "admin")]
     public class StagesController : Controller
     {

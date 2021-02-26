@@ -12,6 +12,7 @@ using System.Threading.Tasks;
 
 namespace SpecialResearch.Controllers
 {
+    //контроллер использовалася на ранних этапах. сейчас не используется
     public class HomeController : Controller
     {
       //  private readonly ILogger<HomeController> _logger;

@@ -17,9 +17,9 @@ namespace SpecialResearch.Models
         public string Name { get; set; }
 
         [Required]
-        [Display(Name = "Заявка")]        //[Display(Request.Number,Name = "Заявка")]
+        [Display(Name = "Заявка")]       
         public int RequestId { get; set; }
-        [Display(Name = "Заявка")]        //[Display(Request.Number,Name = "Заявка")]
+        [Display(Name = "Заявка")]        
         public Request Request { get; set; }
 
         [Display(Name = "Производитель")]

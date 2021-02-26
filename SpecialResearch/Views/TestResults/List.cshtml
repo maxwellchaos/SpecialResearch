@@ -5,7 +5,8 @@
     Layout = "~/Views/Shared/_Layout.cshtml";
 }
 
-<h2>Оборудование Для заявки @ViewBag.ReqNum</h2>
+<h2>Оборудование для заявки @ViewBag.ReqNum</h2>
+
 <table class="table">
     <thead>
         <tr>
@@ -50,73 +51,78 @@
     </tbody>
 </table>
 <h2>Испытания</h2>
-<p>
-    <a asp-action="Create" asp-route-id="@ViewBag.eq.Id">Добавить новое испытание</a>
-</p>
-
-<table class="table">
-    <thead>
-        <tr>
-            <th>
-                @Html.DisplayNameFor(model => model.Result)
-            </th>
-            <th>
-                Интерфейс
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.SignalFound)
-            </th> 
-            <th>
-                @Html.DisplayNameFor(model => model.TestIsOk)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.Date)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.frequency)
-            </th>
-            <th>
-                Тип испытания
-            </th>
-            <th>
-                Испытатель
-            </th>
-            <th></th>
-        </tr>
-    </thead>
-    <tbody>
-        @foreach (var item in Model)
-        {
+@if (ViewBag.StageID < 2)
+{
+    <p>
+        <a asp-action="Create" asp-route-id="@ViewBag.eq.Id">Добавить новое испытание</a>
+    </p>
+}
+    <table class="table">
+        <thead>
             <tr>
-                <td>
-                    @Html.DisplayFor(modelItem => item.Result)
-                </td>
-                <td>
-                    @Html.DisplayFor(modelItem => item.Interface.Name)
-                </td>
-                <td>
-                    @Html.DisplayFor(modelItem => item.SignalFound)
-                </td>
-                <td>
-                    @Html.DisplayFor(modelItem => item.TestIsOk)
-                </td>
-                <td>
-                    @Html.DisplayFor(modelItem => item.Date)
-                </td>
-                <td>
-                    @Html.DisplayFor(modelItem => item.frequency)
-                </td>
-                <td>
-                    @Html.DisplayFor(modelItem => item.TestType.TestName)
-                </td>
-                <td>
-                    @Html.DisplayFor(modelItem => item.User.Login)
-                </td>
-                <td>
-                    <a asp-action="Edit" asp-route-id="@item.Id">Изменить</a> |
-                    <a asp-action="Delete" asp-route-id="@item.Id">Удалить</a>
-                </td>
+                <th>
+                    @Html.DisplayNameFor(model => model.Result)
+                </th>
+                <th>
+                    Интерфейс
+                </th>
+                <th>
+                    @Html.DisplayNameFor(model => model.SignalFound)
+                </th>
+                <th>
+                    @Html.DisplayNameFor(model => model.TestIsOk)
+                </th>
+                <th>
+                    @Html.DisplayNameFor(model => model.Date)
+                </th>
+                <th>
+                    @Html.DisplayNameFor(model => model.frequency)
+                </th>
+                <th>
+                    Тип испытания
+                </th>
+                <th>
+                    Испытатель
+                </th>
+                <th></th>
             </tr>
-        }
-    </tbody>
-</table>
+        </thead>
+        <tbody>
+            @foreach (var item in Model)
+            {
+                <tr>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.Result)
+                    </td>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.Interface.Name)
+                    </td>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.SignalFound)
+                    </td>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.TestIsOk)
+                    </td>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.Date)
+                    </td>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.frequency)
+                    </td>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.TestType.TestName)
+                    </td>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.User.Name)
+                    </td>
+                    <td>
+                        @if (ViewBag.StageID < 2)
+                        {
+                            <a asp-action="Edit" asp-route-id="@item.Id">Изменить</a>
+                            <a asp-action="Delete" asp-route-id="@item.Id">Удалить</a>
+                        }
+                    </td>
+                </tr>
+            }
+        </tbody>
+    </table>

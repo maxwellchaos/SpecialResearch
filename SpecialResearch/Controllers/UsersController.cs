@@ -14,6 +14,9 @@ using SpecialResearch.Models;
 
 namespace SpecialResearch.Controllers
 {
+    //контроллер пользователей
+    //удаление не доступно из интерфейса. 
+    //доступ только у админа кроме залогинивания и разлогинивания
     [Authorize(Roles ="admin")]
     public class UsersController : Controller
     {
@@ -25,6 +28,8 @@ namespace SpecialResearch.Controllers
         }
 
 
+        //доступнео всем
+        //разлогиниться - зайти под другим юзером
         // GET: Users
         [AllowAnonymous]
         public async Task<IActionResult> LogOff()
@@ -35,6 +40,9 @@ namespace SpecialResearch.Controllers
 
         }
 
+
+        //доступ всем. 
+        //сюда попадают те, кто пытается посмотретьинфу не введя пароль
         // GET: Users
         [AllowAnonymous]
         public IActionResult AccessDenied()
@@ -44,6 +52,8 @@ namespace SpecialResearch.Controllers
 
         }
 
+        //доступ всем. м
+        //Залогиниться - показать страницу
         [AllowAnonymous]
         // GET: Users
         public  IActionResult Login(string ReturnUrl)
@@ -52,6 +62,9 @@ namespace SpecialResearch.Controllers
             return View();
      
         }
+
+        //доступ всем. 
+        //Залогиниться проверить пароль
         [HttpPost]
         [AllowAnonymous]
         // GET: Users
@@ -62,14 +75,17 @@ namespace SpecialResearch.Controllers
                 ViewBag.Err = "Неверный логин или пароль";
                 return View(model);
             }
+            //получить хеш пароля
             string hash = SpecialResearchContext.GetHashString(model.Password);
+            //ищем в бд пару логин-пароль
             User UserLogin = await _context.User.Include(u=>u.Role)
                 .Where(u => u.Login == model.Login && u.Password == hash).SingleOrDefaultAsync();
-            if (UserLogin == null )
+            if (UserLogin == null )//не нашли
             {
                 ViewBag.Err = "Неверный логин или пароль";
                 return View(model);
             }
+            //нашли - создаем клаймы с ролью доступа, именем подключившегося и id, чтобы его писать в базу
             var claims = new List<Claim>
             {
                 new Claim(ClaimTypes.Name,UserLogin.Name),
@@ -78,16 +94,16 @@ namespace SpecialResearch.Controllers
             };
             var claimeIdentity = new ClaimsIdentity(claims, "Cookie");
             var claimePrincipal = new ClaimsPrincipal(claimeIdentity);
-            await HttpContext.SignInAsync("Cookie", claimePrincipal);
+            await HttpContext.SignInAsync("Cookie", claimePrincipal);//добавляем клаймы в шифрованные куки
 
-            HttpContext.Session.SetInt32("CurrentUserId", UserLogin.Id);
+            HttpContext.Session.SetInt32("CurrentUserId", UserLogin.Id);//устарело уже.
 
 
-            return Redirect(model.ReturnUrl);
+            return Redirect(model.ReturnUrl);//перенаправляем на нужную страницу. на которую попытались получить доступ
         }
 
       
-
+        //список юзеров
         // GET: Users
         public async Task<IActionResult> Index()
         {
@@ -95,6 +111,7 @@ namespace SpecialResearch.Controllers
             return View(await specialResearchContext.ToListAsync());
         }
 
+        //детальная инфа по юзерам
         // GET: Users/Details/5
         public async Task<IActionResult> Details(int? id)
         {
@@ -114,6 +131,7 @@ namespace SpecialResearch.Controllers
             return View(user);
         }
 
+        //добавляем юзеров - стрница
         // GET: Users/Create
         public IActionResult Create()
         {
@@ -121,6 +139,7 @@ namespace SpecialResearch.Controllers
             return View();
         }
 
+        //добавляем юзеров в БД
         // POST: Users/Create
         // To protect from overposting attacks, enable the specific properties you want to bind to, for 
         // more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
@@ -139,6 +158,7 @@ namespace SpecialResearch.Controllers
             return View(user);
         }
 
+        //отредактировать юзера - страница
         // GET: Users/Edit/5
         public async Task<IActionResult> Edit(int? id)
         {
@@ -156,6 +176,8 @@ namespace SpecialResearch.Controllers
             ViewData["RoleId"] = new SelectList(_context.Role, "Id", "Name", user.RoleId);
             return View(user);
         }
+
+        //сохранить отредактированного юзера  в БД
 
         // POST: Users/Edit/5
         // To protect from overposting attacks, enable the specific properties you want to bind to, for 
@@ -194,6 +216,7 @@ namespace SpecialResearch.Controllers
             return View(user);
         }
 
+        //отключено
         // GET: Users/Delete/5
         public async Task<IActionResult> Delete(int? id)
         {

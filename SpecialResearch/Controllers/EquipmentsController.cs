@@ -17,7 +17,7 @@ namespace SpecialResearch.Controllers
     [Authorize]
     public class EquipmentsController : Controller
     {
-        private readonly SpecialResearchContext _context;
+        private readonly SpecialResearchContext _context;//для доступа к БД
         private readonly IWebHostEnvironment _webHostEnvironment;//Для доступа к файловой системе
 
         public EquipmentsController(SpecialResearchContext context, IWebHostEnvironment webHostEnvironment)
@@ -25,6 +25,8 @@ namespace SpecialResearch.Controllers
             _context = context;
             _webHostEnvironment = webHostEnvironment;
         }
+
+        //не использую - автоматически сгенерированный код
 
         // GET: Equipments
         public async Task<IActionResult> Index()
@@ -41,32 +43,38 @@ namespace SpecialResearch.Controllers
         }
 
 
-
+        //Загрузить файл картинки
         public async Task<IActionResult> AddFile(int? id, IFormFile UploadedFile)
         {
-            if (id != null && UploadedFile != null)
+            if (id != null && UploadedFile != null)//если указан id и файл 
             {
-
+                //запишем файл в папку
                 string Path = "/files/" + Guid.NewGuid().ToString() + UploadedFile.FileName;
                 using (var fileStream = new FileStream(_webHostEnvironment.WebRootPath + Path, FileMode.Create))
                 {
                     await UploadedFile.CopyToAsync(fileStream);
                 }
+                //добудем оборудование из БД по id
                 Equipment equipment = _context.Equipment.Where(r => r.Id == id).FirstOrDefault();
+                //запишем путь к файлу
                 equipment.PhotoCopy = Path;
-                await _context.SaveChangesAsync();
+                await _context.SaveChangesAsync();//сохраним
+                //перенапрамим на заявку
                 return RedirectToAction(nameof(List), new { id = equipment.RequestId });
             }
             return View();
         }
 
 
+        //Откыть список оборудования в форме заявки
         //// GET: Equipments
         public async Task<IActionResult> List(int? id)
         {
+            //данные по оборудованию
             var specialResearchContext = _context.Equipment
                 .Include(e => e.Request)
                 .Where(p => p.RequestId == id);
+            //данные по заявке
             var ReqContext = _context.Request
                 .Where(p => p.Id == id)
                 .Include(u => u.Stage)
@@ -77,6 +85,7 @@ namespace SpecialResearch.Controllers
             return View(await specialResearchContext.ToListAsync());
         }
 
+        //не использую - автоматически сгенерированный код
         // GET: Equipments/Details/5
         public async Task<IActionResult> Details(int? id)
         {
@@ -96,6 +105,8 @@ namespace SpecialResearch.Controllers
             return View(equipment);
         }
 
+        //создание оборудования - открыть страницу создания
+        //на вход подается id заявки
         // GET: Equipments/Create
         public IActionResult Create(int? id)
         {
@@ -107,6 +118,8 @@ namespace SpecialResearch.Controllers
             return View(equipmentData);
         }
 
+        //создание оборудования
+        //получили данные со страницы и записываем в БД
         // POST: Equipments/Create
         // To protect from overposting attacks, enable the specific properties you want to bind to, for 
         // more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
@@ -125,6 +138,8 @@ namespace SpecialResearch.Controllers
             return View(equipment);
         }
 
+
+        //Изменить - вызываем страницу изменения и заполняем ее данными
         // GET: Equipments/Edit/5
         public async Task<IActionResult> Edit(int? id)
         {
@@ -144,6 +159,7 @@ namespace SpecialResearch.Controllers
             return View(equipment);
         }
 
+        //сохраняем измененные данные
         // POST: Equipments/Edit/5
         // To protect from overposting attacks, enable the specific properties you want to bind to, for 
         // more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
@@ -180,6 +196,7 @@ namespace SpecialResearch.Controllers
             return View(equipment);
         }
 
+        //Удалить
         // GET: Equipments/Delete/5
         public async Task<IActionResult> Delete(int? id)
         {
@@ -199,6 +216,7 @@ namespace SpecialResearch.Controllers
             return View(equipment);
         }
 
+        //Подтвердить удаление и стереть запись из бд
         // POST: Equipments/Delete/5
         [HttpPost, ActionName("Delete")]
         [ValidateAntiForgeryToken]
@@ -210,6 +228,7 @@ namespace SpecialResearch.Controllers
             return RedirectToAction(nameof(Index));
         }
 
+        //проверка есть ли такое оборудование
         private bool EquipmentExists(int id)
         {
             return _context.Equipment.Any(e => e.Id == id);

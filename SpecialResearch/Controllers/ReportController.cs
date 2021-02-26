@@ -10,25 +10,29 @@ using System.Threading.Tasks;
 
 namespace SpecialResearch.Controllers
 {
+    //Контроллер отчетов
 
+    //доступен управленцу и админу
     [Authorize (Roles = "admin,manager")]
     public class ReportController : Controller
     {
         //Клаccы для отчетов
         public class yearCount
         {
-            public int Count;
-            public int Year;
-            public List<MonthCount> MonthsCount;
+            //класс года
+            public int Count;//количество в год
+            public int Year;//год
+            public List<MonthCount> MonthsCount;//список месяцев
             
         }
         public class MonthCount
         {
-            public int Count;
-            public string MonthsName;
+            //класс месяцев
+            public int Count;//количество в месяц
+            public string MonthsName;//название месяца
         }
 
-        private readonly SpecialResearchContext _context;
+        private readonly SpecialResearchContext _context;//БД
 
         public ReportController(SpecialResearchContext context)
         {
@@ -48,19 +52,23 @@ namespace SpecialResearch.Controllers
             //выбрать все испытания
             var EqWithTests = _context.TestResult.Include(t => t.Equipment).Include(e => e.Equipment.Request);
          //Подсчитать количество проваленных испытаний
-            foreach (var tr in EqWithTests)
+            foreach (var tr in EqWithTests)//перебрать все испытания
             {
-                tr.Equipment.TestResultCount++;
-                if (!tr.TestIsOk)
-                    tr.Equipment.TestResultFailCount++;
+                tr.Equipment.TestResultCount++;//увеличить счетчик испытаний
+                if (!tr.TestIsOk)//если испытание провалено
+                    tr.Equipment.TestResultFailCount++;//увеличить счетчик проваленных испытианий
             }
 
             var specialResearchContext = _context.Equipment.Include(e => e.Request);
+            //Задать даты испытаний
             ViewBag.EndDate = DateTime.Now;
             ViewBag.StartDate = DateTime.Now.AddYears(-1);
+
             return View(await specialResearchContext.ToListAsync());
         }
 
+
+        //Если изменены даты испытаний то обновить страницу отчета. 
         // POST: Requests/Create
         // To protect from overposting attacks, enable the specific properties you want to bind to, for 
         // more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
@@ -83,16 +91,21 @@ namespace SpecialResearch.Controllers
             return View(await specialResearchContext.ToListAsync());
         }
 
+        //Отчет по пройденным испытаниям
         //TestResults
         // GET: TestResults
         public async Task<IActionResult> TestResults()
         {
+            //выбор всего из бд
             var specialResearchContext = _context.TestResult.Include(t => t.Equipment).Include(t => t.Interface).Include(t => t.TestType).Include(t => t.User);
+            //начальные даты
             ViewBag.EndDate = DateTime.Now;
             ViewBag.StartDate = DateTime.Now.AddYears(-1);
             return View(await specialResearchContext.ToListAsync());
         }
 
+
+        //Если изменены даты испытаний то обновить страницу отчета. 
         // POST: Requests/Create
         // To protect from overposting attacks, enable the specific properties you want to bind to, for 
         // more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
@@ -107,6 +120,7 @@ namespace SpecialResearch.Controllers
                 StartDate = EndDate;
                 EndDate = tmp;
             }
+            
             ViewBag.EndDate = EndDate;
             ViewBag.StartDate = StartDate;
             var specialResearchContext = _context.TestResult.Include(t => t.Equipment).Include(t => t.Interface).Include(t => t.TestType).Include(t => t.User)
@@ -115,12 +129,14 @@ namespace SpecialResearch.Controllers
             return View(await specialResearchContext.ToListAsync());
         }
 
+        //отчет по закрытым заявкам
         public ActionResult ClosedRequest()
         {
+            //создать список лет
             List<yearCount> YearList = new List<yearCount>();
-            try
+            try//попробовать
             {
-               
+               //взять крайние даты из бд по закрытию заявок
                 DateTime FirstDate = _context.Request.Where(r => r.StageID == 4).
                     Where(r => r.EndDate != null).Max(r => r.EndDate);
                 DateTime LastDate = _context.Request.Where(r => r.StageID == 4).
@@ -129,43 +145,52 @@ namespace SpecialResearch.Controllers
                 //перебрать годы
                 for (int year = FirstDate.Year; year <= LastDate.Year; year++)
                 {
+                    //для каждого года
                     yearCount year1 = new yearCount();
                     year1.Year = year;
+                    //задать крайние даты года
                     DateTime firstYearDate = new DateTime(year, 1, 1, 0, 0, 0);
                     DateTime lastYearDate = firstYearDate.AddYears(1).AddMilliseconds(-1);
-
+                    //выбрать все из бд между крайними датами
                     year1.Count = _context.Request.Where(r => r.StageID == 4).Where(r => r.EndDate != null)
                         .Where(r => r.EndDate > firstYearDate)
                         .Where(r => r.EndDate < lastYearDate)
                         .Count();
 
+                    //создать список месяцев для года
                     year1.MonthsCount = new List<MonthCount>();
                     //перебрать месяцы
                     for (int month = 1; month <= 12; month++)
                     {
+                        //для каждого месяца
                         MonthCount mc = new MonthCount();
+                        //взять имя месяца
                         mc.MonthsName = (new DateTime(year, month, 1)).ToString("MMMM");
+                        //выделить крайние даты месяца
                         DateTime firstMonthDate = new DateTime(year, month, 1, 0, 0, 0);
                         DateTime lastMonthDate = firstMonthDate.AddMonths(1).AddMilliseconds(-1);
+                        //взять все заявки между крайними датами из БД
                         mc.Count = _context.Request.Where(r => r.StageID == 4).Where(r => r.EndDate != null)
                         .Where(r => r.EndDate > firstMonthDate)
                         .Where(r => r.EndDate < lastMonthDate)
                         .Count();
-                        year1.MonthsCount.Add(mc);
+                        year1.MonthsCount.Add(mc);//добавить месяц в список месяцев
                     }
-                    YearList.Add(year1);
+                    YearList.Add(year1);//добавить год в список лет
 
                 }
             }
-            catch(Exception e)
+            catch(Exception e)//если что-то пошло не так
             {
-                YearList.Clear();
+                YearList.Clear();//очистить список лет
+                //у меня оно упало когда небыло ни одной заявки. поэтому так чтобы не падало
             }
             ViewBag.y = YearList;
 
-            return View();
+            return View();//показать
         }
 
+        //отчет по созданным заявкам (то же, что и выше но по другому полю в бд)
         public ActionResult OpenedRequest()
         {
             List<yearCount> YearList = new List<yearCount>();
@@ -208,6 +233,12 @@ namespace SpecialResearch.Controllers
 
             return View();
         }
+
+
+
+        //дальше идут автосгенерированные методы. пусть будут, хоть и не обращаюсь к ним.
+
+
 
         // GET: ReportController/Details/5
         public ActionResult BaseMetod()

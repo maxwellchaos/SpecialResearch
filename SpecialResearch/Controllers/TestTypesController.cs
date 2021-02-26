@@ -11,6 +11,9 @@ using SpecialResearch.Models;
 
 namespace SpecialResearch.Controllers
 {
+    //доступен для испытателя и админа
+    //автосгенерированный код. не редактировался.
+    //типы испытаний(тестов)
     [Authorize(Roles = "admin,tester")]
     public class TestTypesController : Controller
     {
@@ -21,12 +24,13 @@ namespace SpecialResearch.Controllers
             _context = context;
         }
 
+        //список всех типов тестов
         // GET: TestTypes
         public async Task<IActionResult> Index()
         {
             return View(await _context.TestType.ToListAsync());
         }
-
+        //детально по кадому типу теста
         // GET: TestTypes/Details/5
         public async Task<IActionResult> Details(int? id)
         {
@@ -45,12 +49,16 @@ namespace SpecialResearch.Controllers
             return View(testType);
         }
 
+
+        //страница добавления типа теста
         // GET: TestTypes/Create
         public IActionResult Create()
         {
             return View();
         }
 
+
+        //добавить тест в БД
         // POST: TestTypes/Create
         // To protect from overposting attacks, enable the specific properties you want to bind to, for 
         // more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
@@ -67,6 +75,7 @@ namespace SpecialResearch.Controllers
             return View(testType);
         }
 
+        //отредактировать тип испытания
         // GET: TestTypes/Edit/5
         public async Task<IActionResult> Edit(int? id)
         {
@@ -83,6 +92,7 @@ namespace SpecialResearch.Controllers
             return View(testType);
         }
 
+        //поменять данные в бд
         // POST: TestTypes/Edit/5
         // To protect from overposting attacks, enable the specific properties you want to bind to, for 
         // more details, see http://go.microsoft.com/fwlink/?LinkId=317598.

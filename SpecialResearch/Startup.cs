@@ -34,12 +34,15 @@ namespace SpecialResearch
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
+            //Ёто сохранение доступа в кукисах
             services.AddAuthentication("Cookie")
                 .AddCookie("Cookie",config=>
                 {
                     config.LoginPath = "/Users/Login";
                     config.AccessDeniedPath = "/Users/AccessDenied";
                 });
+
+            //Ёто роли доступа. через клаймы
             services.AddAuthorization(options =>
             {
                 options.AddPolicy("admin", builder =>
@@ -71,7 +74,7 @@ namespace SpecialResearch
             services.AddDistributedMemoryCache();
             services.AddSession( options =>
             {
-                options.IdleTimeout = TimeSpan.FromMinutes(60);
+                options.IdleTimeout = TimeSpan.FromMinutes(60);//через час разлогинитьс€.
                 options.Cookie.HttpOnly = true;
                 options.Cookie.IsEssential = true;
             });
@@ -94,11 +97,13 @@ namespace SpecialResearch
             app.UseStaticFiles();
 
             app.UseRouting();
+
+            //ѕодключаем авторизацию
             app.UseAuthentication();
             app.UseAuthorization();
            
 
-            app.UseSession();
+            app.UseSession();//—ессии больше не использую, но пусть будут.
             app.UseEndpoints(endpoints =>
             {
                 endpoints.MapControllerRoute(

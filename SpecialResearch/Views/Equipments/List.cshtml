@@ -45,13 +45,13 @@
             </td>
             <td>
                 @*Странная конструкция получилась, но почему-то код в комментариях не срабатывает
-                @if (ViewBag.rq.UseOrder == 0)
-                    Html.DisplayText("Не выдано");
-                else
-                    Html.DisplayText("Выдано");*@
+                    @if (ViewBag.rq.UseOrder == 0)
+                        Html.DisplayText("Не выдано");
+                    else
+                        Html.DisplayText("Выдано");*@
 
                 @{ string UseOrder = "Не выдано";
-                    if (ViewBag.rq.UseOrder != 0)
+                    if (ViewBag.rq.UseOrder != null)
                         UseOrder = "Выдано";
                 }
                 @UseOrder
@@ -65,11 +65,11 @@
             </td>
             <td>
                 @{string EndDate = "";
-                    if (ViewBag.rq.EndDate != new DateTime()) 
+                    if (ViewBag.rq.EndDate != new DateTime())
                         EndDate = ViewBag.rq.EndDate.ToString();
                 }
                 @EndDate
-               
+
 
             </td>
         </tr>
@@ -77,9 +77,12 @@
     </tbody>
 </table>
 <h2>Оборудование</h2>
-<p>
-    <a asp-action="Create" asp-route-id="@ViewBag.rq.Id">Добавить новое оборудование</a>
-</p>
+@if (ViewBag.rq.StageID < 2)
+{
+    <p>
+        <a asp-action="Create" asp-route-id="@ViewBag.rq.Id">Добавить новое оборудование</a>
+    </p>
+}
 <table class="table">
     <thead>
         <tr>
@@ -108,44 +111,48 @@
     <tbody>
         @foreach (var item in Model)
         {
-        <tr>
-            <td>
-                <a asp-controller="TestResults" asp-action="List" asp-route-id="@item.Id">
-                    @Html.DisplayFor(modelItem => item.Name)
-                </a>
-            </td>
+            <tr>
+                <td>
+                    <a asp-controller="TestResults" asp-action="List" asp-route-id="@item.Id">
+                        @Html.DisplayFor(modelItem => item.Name)
+                    </a>
+                </td>
 
-            <td>
-                @Html.DisplayFor(modelItem => item.Manufacturer)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.Model)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.SerialNumber)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.OperatingMode)
-            </td>
-            <td>
-                @if (item.PhotoCopy == null)
-                {
-                    <form asp-action="AddFile" asp-route-id="@item.Id" method="post" enctype="multipart/form-data">
-                        <input type="file" name="UploadedFile" />
-                        <input type="submit" value="Загрузить" />
-                    </form>
+                <td>
+                    @Html.DisplayFor(modelItem => item.Manufacturer)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.Model)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.SerialNumber)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.OperatingMode)
+                </td>
+                <td>
+                    @if (item.PhotoCopy == null)
+                    {
+                        <form asp-action="AddFile" asp-route-id="@item.Id" method="post" enctype="multipart/form-data">
+                            <input type="file" name="UploadedFile" />
+                            <input type="submit" value="Загрузить" />
+                        </form>
 
-                }
-                else
-                {
-                    <img src="@Url.Content(item.PhotoCopy)" width="100" />
-                }
-            </td>
-            <td>
-                <a asp-action="Edit" asp-route-id="@item.Id">Изменить</a> |  <a asp-action="Delete" asp-route-id="@item.Id">Удалить</a>
-            </td>
+                    }
+                    else
+                    {
+                        <img src="@Url.Content(item.PhotoCopy)" width="100" />
+                    }
+                </td>
+                <td>
+                    @if (ViewBag.rq.StageID < 2)
+                    {
+                        <a asp-action="Edit" asp-route-id="@item.Id">Изменить</a> 
+                    <a asp-action="Delete" asp-route-id="@item.Id">Удалить</a>
+                            }
+                </td>
 
-        </tr>
+            </tr>
         }
     </tbody>
 </table>
