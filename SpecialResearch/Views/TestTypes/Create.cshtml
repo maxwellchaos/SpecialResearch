@@ -1,0 +1,47 @@
+﻿@model SpecialResearch.Models.TestType
+
+@{
+    ViewData["Title"] = "Home Page";
+}
+
+<!DOCTYPE html>
+
+<html>
+<head>
+    <meta name="viewport" content="width=device-width" />
+    <title>Создание</title>
+</head>
+<body>
+
+    <h4>Создание типа испытания</h4>
+<hr />
+<div class="row">
+    <div class="col-md-4">
+        <form asp-action="Create">
+            <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+            <div class="form-group">
+                <label asp-for="TestName" class="control-label"></label>
+                <input asp-for="TestName" class="form-control" />
+                <span asp-validation-for="TestName" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="TestDescription" class="control-label"></label>
+                <input asp-for="TestDescription" class="form-control" />
+                <span asp-validation-for="TestDescription" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <input type="submit" value="Создать" class="btn btn-primary" />
+            </div>
+        </form>
+    </div>
+</div>
+
+<div>
+    <a asp-action="Index">Вернуться к списку</a>
+</div>
+
+@section Scripts {
+    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+}
+</body>
+</html>

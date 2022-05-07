@@ -1,0 +1,39 @@
+﻿
+@{
+    ViewData["Title"] = "ClosedRequest";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+@using SpecialResearch.Controllers;
+<h1>Поступившие заявки</h1>
+
+<table class="table table-bordered">
+    <thead>
+        <tr>
+            <th scope="col">Год</th>
+            <th scope="col">Всего</th>
+            @foreach (var mc in ViewBag.y[0].MonthsCount)
+            {
+                <th scope="col">@mc.MonthsName</th>
+            }
+
+
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var yc in ViewBag.y)
+        {
+        <tr>
+            <th scope="row">@yc.Year</th>
+            <td>@yc.Count</td>
+            @foreach (var mc in yc.MonthsCount)
+            {
+                <td>@mc.Count</td>
+            }
+        </tr>
+
+        }
+
+
+    </tbody>
+</table>

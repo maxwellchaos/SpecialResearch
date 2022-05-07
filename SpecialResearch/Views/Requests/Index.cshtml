@@ -1,0 +1,174 @@
+﻿@model IEnumerable<SpecialResearch.Models.Request>
+
+@{
+    ViewData["Title"] = "Home Page";
+}
+
+<!DOCTYPE html>
+
+<html>
+<head>
+    <meta name="viewport" content="width=device-width" />
+    <title>Index</title>
+</head>
+<body>
+
+
+
+    <form asp-action="Index" method="post" class="form-inline">
+
+        <div class="form-group mb-2">
+            <input type="text" readonly class="form-control-plaintext" value="Поиск">
+        </div>
+        <div class="form-group mx-sm-3 mb-2">
+
+            <input type="text" name="template" class="form-control" value="@ViewBag.template" />
+
+        </div>
+        <button type="submit" class="btn btn-primary mb-2">Найти</button>
+    </form>
+
+    <form asp-action="Index" method="post" class="form-inline">
+           <button type="submit" class="btn btn-primary mb-2">Показать все</button>
+    </form>
+
+    <p>
+        <a asp-action="Create">Создать новую заявку</a>
+    </p>
+    <table class="table">
+        <thead>
+            <tr>
+                <th>
+                    @Html.DisplayNameFor(model => model.Number)
+                </th>
+                <th>
+                    @Html.DisplayNameFor(model => model.CreateDate)
+                </th>
+                <th>
+                    Этап заявки
+                </th>
+                <th>
+                    @Html.DisplayNameFor(model => model.Creator)
+                </th>
+                <th>
+                    @Html.DisplayNameFor(model => model.Controler)
+                </th>
+                <th>
+                    @Html.DisplayNameFor(model => model.UseOrder)
+                </th>
+                <th>
+                    @Html.DisplayNameFor(model => model.EndDate)
+                </th>
+                <th>
+
+                    @Html.DisplayNameFor(model => model.PhotoCopy)
+                </th>
+                <th></th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var item in Model)
+            {
+                string Warn = "active";
+                if (item.StageID == 4)
+                {
+                    Warn = "alert-warning";
+                }
+
+                <tr class="@Warn">
+
+                    <td>
+                        <a asp-controller="Equipments" asp-action="List" asp-route-id="@item.Id">
+                            @Html.DisplayFor(modelItem => item.Number)
+                        </a>
+                    </td>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.CreateDate)
+                    </td>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.Stage.StageName)
+                    </td>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.Creator.Name)
+                    </td>
+                    <td>
+                        @if (item.Controler.Id != 1)
+                            @item.Controler.Name
+                    </td>
+                    <td>
+                        @if (item.UseOrder == null)
+                        {
+                            @:Не выдано
+                        }
+                        else
+                        {
+                            @item.UseOrder;
+                        }
+                    </td>
+                    <td>
+                        @if (item.EndDate > DateTime.Now.AddYears(-20))
+                        {
+                            @item.EndDate
+                        }
+                    </td>
+                    <td>
+                        @if (item.Stage.Id == 1)
+                        {
+                            @if (item.PhotoCopy == null)
+                            {
+                                @if (User.IsInRole(Startup.RecieverRole) || User.IsInRole(Startup.AdminRole))
+                                {
+                                    <form asp-action="AddFile" asp-route-id="@item.Id" method="post" enctype="multipart/form-data">
+                                        <input class="form-control-file" type="file" name="UploadedFile" />
+                                        <input type="submit" value="Загрузить" />
+                                    </form>
+                                }
+                            }
+                            else
+                            {
+                                <img src="@Url.Content(item.PhotoCopy)" width="100" />
+                            }
+                        }
+                    </td>
+                    <td>
+
+                        @if (item.Stage.Id == 1)
+                        {
+                            @if (User.IsInRole(Startup.TesterRole) ||
+                         User.IsInRole(Startup.RecieverRole) ||
+                         User.IsInRole(Startup.AdminRole))
+                            {
+                                <a class="btn alert-info" asp-action="NextStage" asp-route-id="@item.Id">Исследования проведены</a>
+                            }
+                            @if (User.IsInRole(Startup.RecieverRole) ||
+                        User.IsInRole(Startup.AdminRole))
+                            {
+                                <a class="btn alert-info" asp-action="Edit" asp-route-id="@item.Id">Изменить</a>
+                                <a class="btn alert-info" asp-action="Delete" asp-route-id="@item.Id">Удалить</a>
+                            }
+                        }
+
+                        @if (item.Stage.Id == 2)
+                        {
+                            @if (User.IsInRole(Startup.ControllerRole) ||
+                        User.IsInRole(Startup.AdminRole))
+                            {
+                                <a class="btn alert-info" asp-action="GetUse" asp-route-id="@item.Id">Выдать предписание</a>
+                            }
+                        }
+
+                        @if (item.Stage.Id == 2 || item.Stage.Id == 3)
+                        {
+                            @if (User.IsInRole(Startup.ManagerRole) ||
+                        User.IsInRole(Startup.AdminRole))
+                            {
+                                <a class="btn alert-info" asp-action="CloseRquest" asp-route-id="@item.Id">Закрыть</a>
+                            }
+                        }
+                    </td>
+                </tr>
+            }
+        </tbody>
+    </table>
+</body>
+</html>

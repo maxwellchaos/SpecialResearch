@@ -1,0 +1,158 @@
+﻿@model IEnumerable<SpecialResearch.Models.Equipment>
+
+@{
+    ViewData["Title"] = "List";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+
+
+<h1>Заявка № @ViewBag.rq.Number</h1>
+<table class="table">
+    <thead>
+        <tr>
+            <th>
+                Дата создания
+            </th>
+            <th>
+                Приемщик
+            </th>
+            <th>
+                Этап заявки
+            </th>
+            <th>
+                Предписание на эксплуатацияю
+            </th>
+            <th>
+                Контролер
+            </th>
+            <th>
+                Дата завершения
+            </th>
+        </tr>
+    </thead>
+    <tbody>
+
+        <tr>
+            <td>
+                @ViewBag.rq.CreateDate
+            </td>
+            <td>
+                @ViewBag.rq.Creator.Name
+            </td>
+            <td>
+                @ViewBag.rq.Stage.StageName
+            </td>
+            <td>
+                @*Странная конструкция получилась, но почему-то код в комментариях не срабатывает
+                    @if (ViewBag.rq.UseOrder == 0)
+                        Html.DisplayText("Не выдано");
+                    else
+                        Html.DisplayText("Выдано");*@
+
+                @{ string UseOrder = "Не выдано";
+                    if (ViewBag.rq.UseOrder != null)
+                        UseOrder = "Выдано";
+                }
+                @UseOrder
+
+            </td>
+            <td>
+                @{string UserName = "";
+                    if (ViewBag.rq.Controler.Id != 1) UserName = ViewBag.rq.Controler.Name;
+                }
+                @UserName
+            </td>
+            <td>
+                @{string EndDate = "";
+                    if (ViewBag.rq.EndDate != new DateTime())
+                        EndDate = ViewBag.rq.EndDate.ToString();
+                }
+                @EndDate
+
+
+            </td>
+        </tr>
+
+    </tbody>
+</table>
+<h2>Оборудование</h2>
+@if (ViewBag.rq.StageID < 2)
+{
+    <p>
+        <a asp-action="Create" asp-route-id="@ViewBag.rq.Id">Добавить новое оборудование</a>
+    </p>
+}
+<table class="table">
+    <thead>
+        <tr>
+            <th>
+                @Html.DisplayNameFor(model => model.Name)
+            </th>
+
+            <th>
+                @Html.DisplayNameFor(model => model.Manufacturer)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.Model)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.SerialNumber)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.OperatingMode)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.PhotoCopy)
+            </th>
+            <th></th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var item in Model)
+        {
+            <tr>
+                <td>
+                    <a asp-controller="TestResults" asp-action="List" asp-route-id="@item.Id">
+                        @Html.DisplayFor(modelItem => item.Name)
+                    </a>
+                </td>
+
+                <td>
+                    @Html.DisplayFor(modelItem => item.Manufacturer)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.Model)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.SerialNumber)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.OperatingMode)
+                </td>
+                <td>
+                    @if (item.PhotoCopy == null)
+                    {
+                        <form asp-action="AddFile" asp-route-id="@item.Id" method="post" enctype="multipart/form-data">
+                            <input type="file" name="UploadedFile" />
+                            <input type="submit" value="Загрузить" />
+                        </form>
+
+                    }
+                    else
+                    {
+                        <img src="@Url.Content(item.PhotoCopy)" width="100" />
+                    }
+                </td>
+                <td>
+                    @if (ViewBag.rq.StageID < 2)
+                    {
+                        <a asp-action="Edit" asp-route-id="@item.Id">Изменить</a> 
+                    <a asp-action="Delete" asp-route-id="@item.Id">Удалить</a>
+                            }
+                </td>
+
+            </tr>
+        }
+    </tbody>
+</table>

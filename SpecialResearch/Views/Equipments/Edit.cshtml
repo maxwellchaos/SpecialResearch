@@ -1,0 +1,61 @@
+﻿@model SpecialResearch.Models.Equipment
+
+@{
+    ViewData["Title"] = "Home Page";
+}
+
+<!DOCTYPE html>
+
+<html>
+<head>
+    <meta name="viewport" content="width=device-width" />
+    <title>Изменить</title>
+</head>
+<body>
+    <form asp-action="Edit">
+        <input asp-for="RequestId" hidden></input>
+        <h4>Новое оборудование для заявки № @ViewBag.RequestName</h4>
+        <hr />
+        <div class="form-row">
+            <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+            <div class="form-group col-md-4">
+                <label asp-for="Name" class="control-label"></label>
+                <input asp-for="Name" class="form-control" />
+                <span asp-validation-for="Name" class="text-danger"></span>
+            </div>
+            <div class="form-group col-md-4">
+                <label asp-for="Manufacturer" class="control-label"></label>
+                <input asp-for="Manufacturer" class="form-control" />
+                <span asp-validation-for="Manufacturer" class="text-danger"></span>
+            </div>
+            <div class="form-group col-md-4">
+                <label asp-for="Model" class="control-label"></label>
+                <input asp-for="Model" class="form-control" />
+                <span asp-validation-for="Model" class="text-danger"></span>
+            </div>
+            <div class="form-group col-md-4">
+                <label asp-for="SerialNumber" class="control-label"></label>
+                <input asp-for="SerialNumber" class="form-control" />
+                <span asp-validation-for="SerialNumber" class="text-danger"></span>
+            </div>
+            <div class="form-group col-md-8">
+                <label asp-for="OperatingMode" class="control-label"></label>
+                <input asp-for="OperatingMode" class="form-control" />
+                <span asp-validation-for="OperatingMode" class="text-danger"></span>
+            </div>
+        </div>
+        <div class="form-group">
+            <input type="submit" value="Сохранить изменения" class="btn btn-primary" />
+        </div>
+
+    </form>
+
+    <div>
+        <a asp-action="List" asp-route-id="@Model.RequestId">Вернуться к Заявке без сохранения</a>
+    </div>
+
+    @section Scripts {
+        @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+    }
+</body>
+</html>

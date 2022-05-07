@@ -1,0 +1,42 @@
+﻿@model SpecialResearch.Models.Stage
+
+@{
+    ViewData["Title"] = "Home Page";
+}
+
+<!DOCTYPE html>
+
+<html>
+<head>
+    <meta name="viewport" content="width=device-width" />
+    <title>Просмотреть</title>
+</head>
+<body>
+
+    <div>
+        <h4>Stage</h4>
+        <table class="table">
+            <thead>
+                <tr>
+                    <th scope="col">#</th>
+                    <th scope="col"> @Html.DisplayNameFor(model => model.StageName)</th>
+
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <th scope="row">@Html.DisplayFor(model => model.Id)</th>
+                    <td>@Html.DisplayFor(model => model.StageName)</td>
+
+                </tr>
+
+            </tbody>
+        </table>
+
+    </div>
+    <div>
+        <a asp-action="Edit" asp-route-id="@Model.Id">Изменить</a> |
+        <a asp-action="Index">Вернуться к списку</a>
+    </div>
+</body>
+</html>

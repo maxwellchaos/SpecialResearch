@@ -1,0 +1,61 @@
+﻿@model SpecialResearch.Models.Equipment
+
+@{
+    ViewData["Title"] = "Home Page";
+}
+
+<!DOCTYPE html>
+
+<html>
+<head>
+    <meta name="viewport" content="width=device-width" />
+    <title>Удалить</title>
+</head>
+<body>
+
+    <h3>Вы уверены, что хотите удалить оборудование из заявки №@Html.DisplayFor(model => model.Request.Number)?</h3>
+    <div>
+
+        <hr />
+        <div class="form-row">
+            <dl class="row">
+                <dt class="col-sm-2">
+                    @Html.DisplayNameFor(model => model.Name)
+                </dt>
+                <dd class="col-sm-10">
+                    @Html.DisplayFor(model => model.Name)
+                </dd>
+                <dt class="col-sm-2">
+                    @Html.DisplayNameFor(model => model.Manufacturer)
+                </dt>
+                <dd class="col-sm-10">
+                    @Html.DisplayFor(model => model.Manufacturer)
+                </dd>
+                <dt class="col-sm-2">
+                    @Html.DisplayNameFor(model => model.Model)
+                </dt>
+                <dd class="col-sm-10">
+                    @Html.DisplayFor(model => model.Model)
+                </dd>
+                <dt class="col-sm-2">
+                    @Html.DisplayNameFor(model => model.SerialNumber)
+                </dt>
+                <dd class="col-sm-10">
+                    @Html.DisplayFor(model => model.SerialNumber)
+                </dd>
+                <dt class="col-sm-2">
+                    @Html.DisplayNameFor(model => model.OperatingMode)
+                </dt>
+                <dd class="col-sm-10">
+                    @Html.DisplayFor(model => model.OperatingMode)
+                </dd>
+            </dl>
+        </div>
+            <form asp-action="Delete">
+                <input type="hidden" asp-for="Id" />
+                <input type="submit" value="Удалить" class="btn btn-danger" /> |
+                <a asp-action="List" asp-route-id="@Model.RequestId">Вернуться к Заявке без удаления</a>
+            </form>
+        </div>
+</body>
+</html>
