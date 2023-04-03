@@ -28,7 +28,7 @@ namespace SpecialResearch.Models
 
 
         [Display(Name = "Создатель заявки")]
-        public int CreatorId { get; set; }
+        public int? CreatorId { get; set; }
         [Display(Name = "Создатель заявки")]
         public User Creator { get; set; }
 

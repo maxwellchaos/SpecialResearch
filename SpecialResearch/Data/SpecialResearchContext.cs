@@ -13,6 +13,7 @@ namespace SpecialResearch.Data
         public SpecialResearchContext(DbContextOptions<SpecialResearchContext> options)
             : base(options)
         {
+            Database.EnsureCreated();
         }
 
         public DbSet<SpecialResearch.Models.Stage> Stage { get; set; }

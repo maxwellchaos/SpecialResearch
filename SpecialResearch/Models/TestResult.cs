@@ -42,7 +42,7 @@ namespace SpecialResearch.Models
         public TestType TestType { get; set; }
 
         [Display(Name = "Испытатель")]
-        public int UserId { get; set; }
+        public int? UserId { get; set; }
         public User User { get; set; }
     }
 }
